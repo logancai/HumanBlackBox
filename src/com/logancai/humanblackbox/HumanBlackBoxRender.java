@@ -171,9 +171,6 @@ public class HumanBlackBoxRender implements DirectRenderingCallback {
 
 	                if (mOrientationManager.hasLocation()) {
 	                    Location location = mOrientationManager.getLocation();
-//	                    List<Place> nearbyPlaces = mLandmarks.getNearbyLandmarks(
-//	                        location.getLatitude(), location.getLongitude());
-//	                    mHumanBlackBoxView.setNearbyPlaces(nearbyPlaces);
 	                }
 
 	                mRenderThread = new RenderThread();

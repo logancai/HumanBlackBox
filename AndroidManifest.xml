@@ -36,11 +36,11 @@
             android:required="true" />
 
         <activity
-            android:name="com.logancai.humanblackbox.HumanBlackBoxMenuActivity"
+            android:name="com.cgii.humanblackbox.HumanBlackBoxMenuActivity"
             android:theme="@style/MenuTheme" />
 
         <service
-            android:name="com.logancai.humanblackbox.HumanBlackBoxService"
+            android:name="com.cgii.humanblackbox.HumanBlackBoxService"
             android:label="@string/app_name"
             android:icon="@drawable/ic_launcher"
             android:enabled="true" >

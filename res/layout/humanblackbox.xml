@@ -19,7 +19,7 @@
     android:layout_height="match_parent"
     android:background="@android:color/black">
 
-    <com.cgii.humanblackbox.HumanBlackBoxView
+    <com.logancai.humanblackbox.HumanBlackBoxView
         android:id="@+id/humanblackbox"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />

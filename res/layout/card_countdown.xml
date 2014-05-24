@@ -14,18 +14,17 @@
      limitations under the License.
 -->
 
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item
-        android:id="@+id/read_aloud"
-        android:title="@string/read_aloud"
-        android:icon="@drawable/ic_read_aloud">
-        </item>
-    <item
-        android:id="@+id/restart"
-        android:title="@string/restart"
-        android:icon="@drawable/ic_sync_50"/>
-    <item
-        android:id="@+id/stop"
-        android:title="@string/stop"
-        android:icon="@drawable/ic_stop"/>
-</menu>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/black" >
+    <TextView
+        android:id="@+id/seconds"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:layout_marginTop="-10px"
+        android:textSize="160px"
+        android:gravity="center" />
+</FrameLayout>

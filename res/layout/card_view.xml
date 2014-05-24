@@ -24,9 +24,12 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:orientation="horizontal" >
+
         <TextView
             android:id="@+id/acceleration"
-            style="@style/ViewComponent" />
+            style="@style/ViewComponent"
+            android:layout_width="256dp"
+            android:layout_height="230dp" />
         
     </LinearLayout>
 </FrameLayout>

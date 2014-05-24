@@ -20,6 +20,7 @@
         android:title="@string/read_aloud"
         android:icon="@drawable/ic_read_aloud">
         </item>
+    
     <item
         android:id="@+id/restart"
         android:title="@string/restart"
@@ -28,4 +29,10 @@
         android:id="@+id/stop"
         android:title="@string/stop"
         android:icon="@drawable/ic_stop"/>
+    
+    <item
+        android:id="@+id/record_video"
+        android:title="@string/record_video"
+        android:icon="@drawable/ic_camera_50"/>
+
 </menu>

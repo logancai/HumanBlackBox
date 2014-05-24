@@ -1,8 +1,7 @@
 package com.cgii.humanblackbox;
 
-import java.util.concurrent.TimeUnit;
-
 import android.content.Context;
+import android.hardware.SensorEvent;
 import android.os.Handler;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -61,7 +60,6 @@ public class MainView extends FrameLayout{
         LayoutInflater.from(context).inflate(R.layout.card_view, this);
 
         mAccelerationView = (TextView) findViewById(R.id.acceleration);
-
 //        setBaseMillis(getElapsedRealtime());
         updateText();
     }
@@ -97,6 +95,10 @@ public class MainView extends FrameLayout{
             postDelayed(mUpdateTextRunnable, DELAY_MILLIS);
         }
         mRunning = true;
+        
+        //Launch SensorServices
+		Services.mSensorServices.start();
+		
     }
     
     /**
@@ -107,6 +109,7 @@ public class MainView extends FrameLayout{
             removeCallbacks(mUpdateTextRunnable);
         }
         mRunning = false;
+        Services.mSensorServices.stop();
     }
     
     @Override
@@ -120,13 +123,24 @@ public class MainView extends FrameLayout{
         return true;
     }
     
+    int count = 1;
+    
     /**
      * Updates the value of the chronometer, visible for testing.
      */
     void updateText() {
-    	mAccelerationView.setText("X: "+ 1 +
-				"\nY: "+ 2 +
-				"\nZ: "+ 3);
+    	SensorEvent event = Services.mSensorEvent;
+//    	mAccelerationView.setText("X: "+ Float.toString(event.values[0]) +
+//				" Y: "+ Float.toString(event.values[1]) +
+//				" Z: "+ Float.toString(event.values[2]));
+//    	mAccelerationView.setText(Integer.toString(count));
+//    	count += 1;
+    	if (event != null){
+    		mAccelerationView.setText(/*"X: "+*/ Float.toString(event.values[0]) +
+    				" Y: "+ Float.toString(event.values[1]) +
+    				" Z: "+ Float.toString(event.values[2]));
+    	}
+    	
         if (mChangeListener != null) {
             mChangeListener.onChange();
         }

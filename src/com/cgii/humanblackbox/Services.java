@@ -1,20 +1,30 @@
 package com.cgii.humanblackbox;
 
-import com.google.android.glass.timeline.LiveCard;
-import com.google.android.glass.timeline.LiveCard.PublishMode;
-
 import android.app.PendingIntent;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
+import android.hardware.SensorEvent;
+import android.hardware.SensorManager;
 import android.os.IBinder;
+import android.util.Log;
+
+import com.google.android.glass.timeline.LiveCard;
+import com.google.android.glass.timeline.LiveCard.PublishMode;
 
 public class Services extends Service {
 	
 	private static final String LIVE_CARD_TAG = "humanblackbox";
+	public static final String TAG = "com.cgii.humanblackbox";
 	
 	private LiveCard mLiveCard;
 	
 	private Drawer mDrawer;
+	
+	public static SensorManager mSensorManager;
+	public static SensorServices mSensorServices;
+	public static SensorEvent mSensorEvent;
+	public static boolean isRecording;
 	
 	@Override
 	public IBinder onBind(Intent intent) {
@@ -22,9 +32,24 @@ public class Services extends Service {
 	}
 	
 	@Override
+	public void onCreate(){
+		Log.v(TAG, "onCreate called");
+		super.onCreate();
+		if (mSensorManager == null){
+			mSensorManager = 
+					(SensorManager) getSystemService(Context.SENSOR_SERVICE);
+		}
+		isRecording = false;
+	}
+	
+	@Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+		Log.v(TAG, "onCreate called");
 		if (mLiveCard == null) {
-            mLiveCard = new LiveCard(this, LIVE_CARD_TAG);
+			Log.v(TAG, "LiveCard is null. Creating card...");
+			mSensorServices = new SensorServices();
+			
+			mLiveCard = new LiveCard(this, LIVE_CARD_TAG);
 
             // Keep track of the callback to remove it before unpublishing.
             mDrawer = new Drawer(this);
@@ -41,4 +66,8 @@ public class Services extends Service {
 		return START_STICKY;
 	}
 	
+	@Override
+	public void onDestroy(){
+		mSensorServices.stop();
+	}
 }

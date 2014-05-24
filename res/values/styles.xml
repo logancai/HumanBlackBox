@@ -17,7 +17,7 @@
 <resources>
     
     <style name="ViewComponent">
-        <item name="android:layout_width">150px</item>
+        <item name="android:layout_width">300px</item>
         <item name="android:layout_height">150px</item>
         <item name="android:layout_gravity">center</item>
         <item name="android:layout_marginTop">-17px</item>

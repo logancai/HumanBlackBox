@@ -37,12 +37,7 @@ public class MainView extends FrameLayout{
         }
     };
     
-    private boolean mStarted;
-    private boolean mForceStart;
-    private boolean mVisible;
     private boolean mRunning;
-    
-    private long mBaseMillis;
 
     private Listener mChangeListener;
 	
@@ -61,14 +56,6 @@ public class MainView extends FrameLayout{
 
         mAccelerationView = (TextView) findViewById(R.id.acceleration);
 //        setBaseMillis(getElapsedRealtime());
-        updateText();
-    }
-	
-	/**
-     * Sets the base value of the chronometer in milliseconds.
-     */
-    public void setBaseMillis(long baseMillis) {
-        mBaseMillis = baseMillis;
         updateText();
     }
     
@@ -96,8 +83,8 @@ public class MainView extends FrameLayout{
         }
         mRunning = true;
         
-        //Launch SensorServices
-		Services.mSensorServices.start();
+//        //Launch SensorServices
+//		Services.mSensorServices.start();
 		
     }
     
@@ -109,7 +96,7 @@ public class MainView extends FrameLayout{
             removeCallbacks(mUpdateTextRunnable);
         }
         mRunning = false;
-        Services.mSensorServices.stop();
+//        Services.mSensorServices.stop();
     }
     
     @Override

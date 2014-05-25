@@ -15,24 +15,20 @@
 -->
 
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item
-        android:id="@+id/read_aloud"
-        android:title="@string/read_aloud"
-        android:icon="@drawable/ic_read_aloud">
-        </item>
-    
-    <item
-        android:id="@+id/restart"
-        android:title="@string/restart"
-        android:icon="@drawable/ic_sync_50"/>
-    <item
-        android:id="@+id/stop"
-        android:title="@string/stop"
-        android:icon="@drawable/ic_stop"/>
     
     <item
         android:id="@+id/record_video"
         android:title="@string/record_video"
         android:icon="@drawable/ic_camera_50"/>
+    
+    <item
+        android:id="@+id/send_location"
+        android:title="@string/send_location"
+        android:icon="@drawable/ic_location_50"/>
+    
+    <item
+        android:id="@+id/stop"
+        android:title="@string/stop"
+        android:icon="@drawable/ic_stop"/>
 
 </menu>

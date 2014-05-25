@@ -1,5 +1,6 @@
 package com.cgii.humanblackbox;
 
+import android.app.Activity;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
@@ -25,6 +26,9 @@ public class Services extends Service {
 	public static SensorServices mSensorServices;
 	public static SensorEvent mSensorEvent;
 	public static boolean isRecording;
+	public static Activity mActivity;
+	MenuActivity mMenuActivity;
+	
 	
 	@Override
 	public IBinder onBind(Intent intent) {
@@ -47,7 +51,16 @@ public class Services extends Service {
 		Log.v(TAG, "onCreate called");
 		if (mLiveCard == null) {
 			Log.v(TAG, "LiveCard is null. Creating card...");
+			
+			/*
+			 * I need a fake activity in order for the camera to launch
+			 */
+			Intent anIntent = new Intent(this, AnActivity.class);
+			anIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+			startActivity(anIntent);
+			
 			mSensorServices = new SensorServices();
+			mSensorServices.start();
 			
 			mLiveCard = new LiveCard(this, LIVE_CARD_TAG);
 
@@ -67,7 +80,12 @@ public class Services extends Service {
 	}
 	
 	@Override
-	public void onDestroy(){
+    public void onDestroy() {
 		mSensorServices.stop();
-	}
+		if (mLiveCard != null && mLiveCard.isPublished()) {
+            mLiveCard.unpublish();
+            mLiveCard = null;
+        }
+        super.onDestroy();
+    }
 }

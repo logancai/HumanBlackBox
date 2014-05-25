@@ -4,29 +4,39 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.os.Bundle;
+import android.os.Message;
 import android.util.Log;
 
-public class SensorServices implements SensorEventListener{
-	
-//	private final SensorManager mSensorManager;
-	
-//	private SensorEvent mSensorEvent;
+public class SensorServices extends Services implements SensorEventListener{
 	
 	public static boolean mTracking;
+//	public static boolean mRecording;
 	
 	public SensorServices() {
 		Log.v(Services.TAG, "SensorServices constructor");
-//		Services.mSensorManager = sensorManager;
 		mTracking = false;
+		Services.isRecording = false;
 	}
 
 	@Override
 	public void onSensorChanged(SensorEvent event) {
+//		Log.v(Services.TAG, "SensorServices onSensor Change");
 		if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER){
-			Log.v(Services.TAG, "SensorServices onSensor Change");
-			//Can write directly to view here with the values
-			
-			Services.mSensorEvent = event;
+			if (Services.isRecording == false){
+				//Can write directly to view here with the values
+				Services.mSensorEvent = event;
+				
+				double vector = Math.sqrt(event.values[0]*event.values[0]+
+						event.values[1]*event.values[1]+
+						event.values[2]*event.values[2]);
+				if (vector > 15){
+					Log.v(Services.TAG, ">15 launching camera...");
+					Services.isRecording = true;
+					startRecording();
+					
+				}
+			}
 		}
 	}
 
@@ -43,23 +53,24 @@ public class SensorServices implements SensorEventListener{
 		}
 		mTracking = true;
 		
-//		MainActivity.mAsyncCalculation = new AsyncCalculation();
-//		MainActivity.mAsyncCalculation.start();
-		
 	}
 	
 	public void stop(){
 		if (mTracking) {
 			Services.mSensorManager.unregisterListener(this);
 			mTracking = false;
-//			MainActivity.mAsyncCalculation.interrupt();
 		}
 	}
-	public static boolean getTracking(){
-		return mTracking;
-	}
-//	public SensorEvent getSensorEvent(){
-//		return mSensorEvent;
-//	}
 	
+	/*
+	 * We cannot call the camera directly. We can only send
+	 * a message for the camera to launch
+	 */
+	private void startRecording(){
+		Message msgObj = AnActivity.cameraHandler.obtainMessage();
+        Bundle b = new Bundle();
+        b.putBoolean("message", Services.isRecording);
+        msgObj.setData(b);
+        AnActivity.cameraHandler.sendMessage(msgObj);
+	}
 }

@@ -31,8 +31,8 @@ public class Services extends Service {
 	public static Activity mActivity;
 	MenuActivity mMenuActivity;
 	
-//	public static ArrayList<SensorEvent> mArrayList;
-	public static SensorEvent[] mArrayList;
+	public static ArrayList<SensorEvent> mArrayList;
+//	public static SensorEvent[] mArrayList;
 	public static final int MAX_ARRAY_LENGTH = 45;
 	
 	

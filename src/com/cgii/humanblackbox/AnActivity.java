@@ -12,6 +12,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.view.Menu;
 import android.view.View;
 
 import com.google.android.glass.app.Card;
@@ -22,34 +23,59 @@ public class AnActivity extends Activity{
 	public final static int recordingTimeInSeconds = 15;
 	private static final int TAKE_VIDEO_REQUEST = 1;
 	
-//	public void onCreate(Bundle savedInstanceState){
-//		super.onCreate(savedInstanceState);
-//		Services.mActivity = this;
-//	}
+	public AnActivity(){
+		Log.v(Services.TAG, "AnActivity constructor");
+		Services.mActivity = this;
+	}
 	
-//	private static void launchCamera(Activity activity){
-//		Log.v(Services.TAG, "LaunchCamera called called");
-//    	Intent intent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
-//		intent.putExtra(MediaStore.EXTRA_DURATION_LIMIT, recordingTimeInSeconds);
-//		intent.putExtra(MediaStore.EXTRA_VIDEO_QUALITY, TAKE_VIDEO_REQUEST);
-//		if (activity == null){
-//			Log.v(Services.TAG, "LaunchCamera activity is null");
-//		}
-//		activity.startActivityForResult(intent, 1);
-//		
-//    }
-//    
-//    public static Handler cameraHandler = new Handler(){
-//    	public void handleMessage(Message msg){
-//    		Log.v(Services.TAG, "Menu handler called");
-//    		boolean isRecording = msg.getData().getBoolean("message");
-//    		Log.v(Services.TAG, "Boolean is "+ isRecording);
-//    		if (isRecording){
-//    			launchCamera(Services.mActivity);
-//    		}
-//    	}
-//    };
-//    
+	public void onCreate(Bundle savedInstanceState){
+		Log.v(Services.TAG, "AnActivity onCreate");
+		super.onCreate(savedInstanceState);
+		Services.mActivity = this;
+	}
+	
+	@Override
+    public void onAttachedToWindow() {
+		Log.v(Services.TAG, "AnActivity onAttach");
+		Services.mActivity = this;
+		super.onAttachedToWindow();
+		openOptionsMenu();
+    }
+	
+	@Override
+    public void onOptionsMenuClosed(Menu menu) {
+        // Nothing else to do, closing the Activity.
+		Log.v(Services.TAG, "AnActivity onOptionMenu");
+		finish();
+    }
+	
+	private static void launchCamera(Activity activity){
+		Log.v(Services.TAG, "LaunchCamera called called");
+    	Intent intent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
+		intent.putExtra(MediaStore.EXTRA_DURATION_LIMIT, recordingTimeInSeconds);
+		intent.putExtra(MediaStore.EXTRA_VIDEO_QUALITY, TAKE_VIDEO_REQUEST);
+		if (activity == null){
+			Log.v(Services.TAG, "LaunchCamera activity is null");
+			Services.isRecording = false;
+		}
+		else{
+			activity.startActivityForResult(intent, 1);
+//			postActivity();
+			Services.isRecording = false;
+		}
+    }
+    
+    public static Handler cameraHandler = new Handler(){
+    	public void handleMessage(Message msg){
+    		Log.v(Services.TAG, "Menu handler called");
+    		boolean isRecording = msg.getData().getBoolean("message");
+    		Log.v(Services.TAG, "Boolean is "+ isRecording);
+    		if (isRecording){
+    			launchCamera(Services.mActivity);
+    		}
+    	}
+    };
+    
     @Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
     	Log.v(Services.TAG, "onActivityResult called");

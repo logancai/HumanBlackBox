@@ -10,15 +10,27 @@ import android.os.Bundle;
 import android.os.Message;
 import android.util.Log;
 
+class SensorEventValues {
+	public double[] values;
+	public SensorEventValues(double a, double b, double c){
+		values = new double[3];
+		values[0] = a;
+		values[1] = b;
+		values[2] = c;
+	}
+}
+
 public class SensorServices extends Services implements SensorEventListener{
 	
 	public static boolean mTracking;
+//	private SensorEventValues mSensorEventValues;
+	
 	
 	public SensorServices() {
 		Log.v(Services.TAG, "SensorServices constructor");
 		mTracking = false;
 		Services.isRecording = false;
-		mArrayList = new ArrayList<SensorEvent>();
+		mArrayList = new ArrayList<SensorEventValues>();
 	}
 	
 	/*
@@ -120,18 +132,20 @@ public class SensorServices extends Services implements SensorEventListener{
 				if (mArrayList.size() > MAX_ARRAY_LENGTH){
 					mArrayList.remove(0);
 				}
-				mArrayList.add(event);
+				SensorEventValues mSensorEventValues = 
+						new SensorEventValues(event.values[0],event.values[1],event.values[2]);
+				mArrayList.add(mSensorEventValues);
 				
-//				if(count < 10){
-//					Log.v(Services.TAG, "////////Start of list");
-//					for (int i = 0; i < mArrayList.size(); i++) {
-//						Log.v(Services.TAG, i +":"+ Double.toString(mArrayList.get(i).values[0]));
-//					}
-//					Log.v(Services.TAG, "Mean" +":"+ Double.toString(meanX()));
-//					Log.v(Services.TAG, "Variance" +":"+ Double.toString(varianceX()));
-//					Log.v(Services.TAG, "////////End of list");
-//					count++;
-//				}
+				if(count < 10){
+					Log.v(Services.TAG, "////////Start of list");
+					for (int i = 0; i < mArrayList.size(); i++) {
+						Log.v(Services.TAG, i +":"+ Double.toString(mArrayList.get(i).values[0]));
+					}
+					Log.v(Services.TAG, "Mean" +":"+ Double.toString(meanX()));
+					Log.v(Services.TAG, "Variance" +":"+ Double.toString(varianceX()));
+					Log.v(Services.TAG, "////////End of list");
+					count++;
+				}
 				
 				/*
 				 * End: Math calculation goes here.

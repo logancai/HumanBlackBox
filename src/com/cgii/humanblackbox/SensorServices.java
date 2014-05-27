@@ -111,7 +111,7 @@ public class SensorServices extends Services implements SensorEventListener{
 				Services.mSensorEvent = event;
 				
 				/*
-				 * START: Math calculations goes here.
+				 * START: Math calculations goes here. AS OF RIGHT NOW my math does not work...
 				 * To call camera, you must do these 2 commands.
 				 * 1) Services.isRecording = true;
 				 * 2) startRecording();
@@ -120,26 +120,18 @@ public class SensorServices extends Services implements SensorEventListener{
 				if (mArrayList.size() > MAX_ARRAY_LENGTH){
 					mArrayList.remove(0);
 				}
-//				mArrayList.add(event);
-				mArrayList.add(mArrayList.size(), event);
+				mArrayList.add(event);
 				
-				if(count < 10){
-					Log.v(Services.TAG, "////////Start of list");
-					for (int i = 0; i < mArrayList.size(); i++) {
-						Log.v(Services.TAG, i +":"+ Double.toString(mArrayList.get(i).values[0]));
-					}
-					Log.v(Services.TAG, "Mean" +":"+ Double.toString(meanX()));
-					Log.v(Services.TAG, "Variance" +":"+ Double.toString(varianceX()));
-					Log.v(Services.TAG, "////////End of list");
-					count++;
-				}
-				
-				
-				
-				
-//				Log.v(Services.TAG, "X variance is: "+ Double.toString(varianceX()));
-//				Log.v(Services.TAG, "Y average is: "+ Double.toString(meanY()));
-//				Log.v(Services.TAG, "Z average is: "+ Double.toString(meanZ()));
+//				if(count < 10){
+//					Log.v(Services.TAG, "////////Start of list");
+//					for (int i = 0; i < mArrayList.size(); i++) {
+//						Log.v(Services.TAG, i +":"+ Double.toString(mArrayList.get(i).values[0]));
+//					}
+//					Log.v(Services.TAG, "Mean" +":"+ Double.toString(meanX()));
+//					Log.v(Services.TAG, "Variance" +":"+ Double.toString(varianceX()));
+//					Log.v(Services.TAG, "////////End of list");
+//					count++;
+//				}
 				
 				/*
 				 * End: Math calculation goes here.
@@ -153,8 +145,8 @@ public class SensorServices extends Services implements SensorEventListener{
 						event.values[2]*event.values[2]);
 				if (vector > 15){
 					Log.v(Services.TAG, ">15 launching camera...");
-//					Services.isRecording = true;
-//					startRecording();
+					Services.isRecording = true;
+					startRecording();
 				}
 				/*
 				 * END: Keep this code for demo.
@@ -189,11 +181,13 @@ public class SensorServices extends Services implements SensorEventListener{
 	 * We cannot call the camera directly. We can only send
 	 * a message for the camera to launch
 	 */
-	private void startRecording(){
-		Message msgObj = AnActivity.cameraHandler.obtainMessage();
+	public static void startRecording(){
+//		Message msgObj = AnActivity.cameraHandler.obtainMessage();
+		Message msgObj = MenuActivity.cameraHandler.obtainMessage();
         Bundle b = new Bundle();
         b.putBoolean("message", Services.isRecording);
         msgObj.setData(b);
-        AnActivity.cameraHandler.sendMessage(msgObj);
+//        AnActivity.cameraHandler.sendMessage(msgObj);
+        MenuActivity.cameraHandler.sendMessage(msgObj);
 	}
 }

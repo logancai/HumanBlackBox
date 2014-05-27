@@ -32,7 +32,6 @@ public class Services extends Service {
 	MenuActivity mMenuActivity;
 	
 	public static ArrayList<SensorEvent> mArrayList;
-//	public static SensorEvent[] mArrayList;
 	public static final int MAX_ARRAY_LENGTH = 45;
 	
 	
@@ -61,9 +60,11 @@ public class Services extends Service {
 			/*
 			 * I need a fake activity in order for the camera to launch
 			 */
-			Intent anIntent = new Intent(this, AnActivity.class);
+//			Intent anIntent = new Intent(this, AnActivity.class);
+			Intent anIntent = new Intent(this, MenuActivity.class);
 			anIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 			startActivity(anIntent);
+			
 			
 			mSensorServices = new SensorServices();
 			mSensorServices.start();

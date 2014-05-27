@@ -13,12 +13,14 @@ import android.util.Log;
 public class SensorServices extends Services implements SensorEventListener{
 	
 	public static boolean mTracking;
+	int count = 0;
 	
 	public SensorServices() {
 		Log.v(Services.TAG, "SensorServices constructor");
 		mTracking = false;
 		Services.isRecording = false;
-		mArrayList = new ArrayList<SensorEvent>();
+//		mArrayList = new ArrayList<SensorEvent>();
+		mArrayList = new SensorEvent[MAX_ARRAY_LENGTH];
 	}
 	
 	/*
@@ -34,75 +36,78 @@ public class SensorServices extends Services implements SensorEventListener{
 	
 	private double meanX(){
 		double sum = 0;
-		for(int i = 0; i < mArrayList.size(); i++){
-			sum += mArrayList.get(i).values[0];
+		for(int i = 0; i < mArrayList.length; i++){
+			if(mArrayList[i] != null){
+				sum += mArrayList[i].values[0];
+			}
 		}
-		meanValueX = sum/mArrayList.size();
+		meanValueX = sum/mArrayList.length;
 		return meanValueX;
 	}
-	private double meanY(){
-		double sum = 0;
-		for(int i = 0; i < mArrayList.size(); i++){
-			sum += mArrayList.get(i).values[1];
-		}
-		meanValueY = sum/mArrayList.size();
-		return meanValueY;
-	}
-	private double meanZ(){
-		double sum = 0;
-		for(int i = 0; i < mArrayList.size(); i++){
-			sum += mArrayList.get(i).values[2];
-		}
-		meanValueZ = sum/mArrayList.size();
-		return meanValueZ;
-	}
+//	private double meanY(){
+//		double sum = 0;
+//		for(int i = 0; i < mArrayList.size(); i++){
+//			sum += mArrayList.get(i).values[1];
+//		}
+//		meanValueY = sum/mArrayList.size();
+//		return meanValueY;
+//	}
+//	private double meanZ(){
+//		double sum = 0;
+//		for(int i = 0; i < mArrayList.size(); i++){
+//			sum += mArrayList.get(i).values[2];
+//		}
+//		meanValueZ = sum/mArrayList.size();
+//		return meanValueZ;
+//	}
 	private double varianceX(){
 		double sum = 0;
-		for(int i = 0; i < mArrayList.size(); i++){
-			if(meanValueX == 0){
-				//In case you forget to call mean
-				meanX();
+		for(int i = 0; i < mArrayList.length; i++){
+			if (mArrayList[i] != null){
+				if(meanValueX == 0){
+					//In case you forget to call mean
+					meanX();
+				}
+				double value = mArrayList[i].values[0] - meanValueX;
+				value = value * value;
+				sum += value;
 			}
-			double value = mArrayList.get(i).values[0] - meanValueX;
-			value = value * value;
-			sum += value;
 		}
-		varianceValueX = sum/mArrayList.size();
+		varianceValueX = sum/mArrayList.length;
 //		standardDeviationValueX = Math.sqrt(varianceValueX);
 		return varianceValueX;
 	}
-	private double varianceY(){
-		double sum = 0;
-		if(meanValueY == 0){
-			//In case you forget to call mean
-			meanY();
-		}
-		for(int i = 0; i < mArrayList.size(); i++){
-			double value = mArrayList.get(i).values[1] - meanValueY;
-			value = value * value;
-			sum += value;
-		}
-		varianceValueY = sum/mArrayList.size();
-//		standardDeviationValueY = Math.sqrt(varianceValueY);
-		return varianceValueY;
-	}
-	private double varianceZ(){
-		double sum = 0;
-		if(meanValueZ == 0){
-			//In case you forget to call mean
-			meanZ();
-		}
-		for(int i = 0; i < mArrayList.size(); i++){
-			double value = mArrayList.get(i).values[2] - meanValueZ;
-			value = value * value;
-			sum += value;
-		}
-		varianceValueZ = sum/mArrayList.size();
-//		standardDeviationValueZ = Math.sqrt(varianceValueZ);
-		return varianceValueZ;
-	}
+//	private double varianceY(){
+//		double sum = 0;
+//		if(meanValueY == 0){
+//			//In case you forget to call mean
+//			meanY();
+//		}
+//		for(int i = 0; i < mArrayList.size(); i++){
+//			double value = mArrayList.get(i).values[1] - meanValueY;
+//			value = value * value;
+//			sum += value;
+//		}
+//		varianceValueY = sum/mArrayList.size();
+////		standardDeviationValueY = Math.sqrt(varianceValueY);
+//		return varianceValueY;
+//	}
+//	private double varianceZ(){
+//		double sum = 0;
+//		if(meanValueZ == 0){
+//			//In case you forget to call mean
+//			meanZ();
+//		}
+//		for(int i = 0; i < mArrayList.size(); i++){
+//			double value = mArrayList.get(i).values[2] - meanValueZ;
+//			value = value * value;
+//			sum += value;
+//		}
+//		varianceValueZ = sum/mArrayList.size();
+////		standardDeviationValueZ = Math.sqrt(varianceValueZ);
+//		return varianceValueZ;
+//	}
 	
-	int count = 0;
 	@Override
 	public void onSensorChanged(SensorEvent event) {
 		if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER){
@@ -117,16 +122,21 @@ public class SensorServices extends Services implements SensorEventListener{
 				 * 2) startRecording();
 				 */
 				
-				if (mArrayList.size() > MAX_ARRAY_LENGTH){
-					mArrayList.remove(0);
+				if (count > MAX_ARRAY_LENGTH){
+					count = 0;
+					mArrayList[count] = event;
 				}
-//				mArrayList.add(event);
-				mArrayList.add(mArrayList.size(), event);
+				else{
+					mArrayList[count] = event;
+					count++;
+				}
 				
 				if(count < 10){
 					Log.v(Services.TAG, "////////Start of list");
-					for (int i = 0; i < mArrayList.size(); i++) {
-						Log.v(Services.TAG, i +":"+ Double.toString(mArrayList.get(i).values[0]));
+					for (int i = 0; i < mArrayList.length; i++) {
+						if(mArrayList[i] != null){
+							Log.v(Services.TAG, i +":"+ Double.toString(mArrayList[i].values[0]));
+						}
 					}
 					Log.v(Services.TAG, "Mean" +":"+ Double.toString(meanX()));
 					Log.v(Services.TAG, "Variance" +":"+ Double.toString(varianceX()));

@@ -82,6 +82,14 @@ public class MenuActivity extends Activity{
             	Services.isRecording = true;
             	SensorServices.startRecording();
         		return true;
+            case R.id.car_mode:
+            	if(Services.carMode){
+            		Services.carMode = false;
+            	}
+            	else{
+            		Services.carMode = true;
+            	}
+            	return true;
             default:
                 return super.onOptionsItemSelected(item);
         }

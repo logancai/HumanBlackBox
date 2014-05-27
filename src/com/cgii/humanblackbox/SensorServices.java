@@ -1,6 +1,7 @@
 package com.cgii.humanblackbox;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -12,19 +13,19 @@ import android.util.Log;
 
 class SensorEventValues {
 	public double[] values;
+	Date date;
 	public SensorEventValues(double a, double b, double c){
 		values = new double[3];
 		values[0] = a;
 		values[1] = b;
 		values[2] = c;
+		date = new Date();
 	}
 }
 
 public class SensorServices extends Services implements SensorEventListener{
 	
 	public static boolean mTracking;
-//	private SensorEventValues mSensorEventValues;
-	
 	
 	public SensorServices() {
 		Log.v(Services.TAG, "SensorServices constructor");
@@ -151,8 +152,11 @@ public class SensorServices extends Services implements SensorEventListener{
 				 * use meanValueX so it does not need to recalculate
 				 */
 				
-				meanX();
-				Log.v(Services.TAG, "Variance" +":"+ Double.toString(varianceX()));
+//				meanX();
+				meanY();
+//				Log.v(Services.TAG, "Mean" +":"+ Double.toString(meanX()));
+//				Log.v(Services.TAG, "Variance" +":"+ Double.toString(varianceX()));
+				Log.v(Services.TAG, "Variance" +":"+ Double.toString(varianceY()));
 				/*
 				 * End: of mean and variance calculation
 				 */
@@ -169,8 +173,8 @@ public class SensorServices extends Services implements SensorEventListener{
 						event.values[2]*event.values[2]);
 				if (vector > 15){
 					Log.v(Services.TAG, ">15 launching camera...");
-					Services.isRecording = true;
-					startRecording();
+//					Services.isRecording = true;
+//					startRecording();
 				}
 				/*
 				 * END: Keep this code for demo.

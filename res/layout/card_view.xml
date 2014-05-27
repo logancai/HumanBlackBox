@@ -1,35 +1,106 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (C) 2013 The Android Open Source Project
 
-     Licensed under the Apache License, Version 2.0 (the "License");
-     you may not use this file except in compliance with the License.
-     You may obtain a copy of the License at
-
-          http://www.apache.org/licenses/LICENSE-2.0
-
-     Unless required by applicable law or agreed to in writing, software
-     distributed under the License is distributed on an "AS IS" BASIS,
-     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     See the License for the specific language governing permissions and
-     limitations under the License.
--->
-
-<FrameLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/black" >
+    
+    <RelativeLayout
+        android:id="@+id/left_column"
+        android:layout_width="@dimen/glass_card_left_column_width"
+        android:layout_height="match_parent"
+        >
+
+        <!-- Put widgets for the left column inside this RelativeLayout. -->
+
+        <ImageView
+            android:id="@+id/imageView1"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignWithParentIfMissing="false"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:src="@drawable/owl" />
+
+    </RelativeLayout>
+    
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/glass_card_body_height"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="@dimen/glass_card_two_column_margin"
+        android:layout_marginRight="@dimen/glass_card_margin"
+        android:layout_marginTop="@dimen/glass_card_margin"
+        android:layout_toRightOf="@+id/left_column"
+        >
+        
+        <TextView
+            android:id="@+id/Xacceleration"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:id="@+id/Yacceleration"
+            android:layout_below="@+id/Xacceleration"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:id="@+id/Zacceleration"
+            android:layout_below="@+id/Yacceleration"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:id="@+id/CarMode"
+            android:layout_below="@+id/Zacceleration"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content" />
+        
+        <!-- Put widgets for the right column inside this RelativeLayout. -->
+
+    </RelativeLayout>
+    
     <LinearLayout
+        android:id="@+id/footer_container"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:orientation="horizontal" >
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_gravity="bottom|left"
+        android:layout_marginBottom="@dimen/glass_card_footer_margin"
+        android:layout_marginLeft="@dimen/glass_card_two_column_margin"
+        android:layout_marginRight="@dimen/glass_card_margin"
+        android:layout_toRightOf="@+id/left_column"
+        android:orientation="horizontal"
+        >
+
+        <!--
+             The footer view will grow to fit as much content as possible while the
+             timestamp view keeps a fixed width. If the footer text is too long, it
+             will be ellipsized with a 40px margin between it and the timestamp.
+        -->
 
         <TextView
-            android:id="@+id/acceleration"
-            style="@style/ViewComponent"
-            android:layout_width="256dp"
-            android:layout_height="230dp" />
-        
+            android:id="@+id/footer"
+            android:layout_width="0dip"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:ellipsize="end"
+            android:singleLine="true"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            />
+
+        <TextView
+            android:id="@+id/timestamp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/glass_card_margin"
+            android:ellipsize="end"
+            android:singleLine="true"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            />
+
     </LinearLayout>
-</FrameLayout>
+    
+</RelativeLayout>

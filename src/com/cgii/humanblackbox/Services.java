@@ -11,9 +11,11 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorManager;
 import android.os.IBinder;
 import android.util.Log;
+import android.widget.TextView;
 
 import com.google.android.glass.timeline.LiveCard;
 import com.google.android.glass.timeline.LiveCard.PublishMode;
+import com.logancai.humanblackbox.R;
 
 public class Services extends Service {
 	
@@ -30,6 +32,7 @@ public class Services extends Service {
 	public static boolean isRecording;
 	public static Activity mActivity;
 	MenuActivity mMenuActivity;
+	public static boolean carMode;
 	
 	public static ArrayList<SensorEventValues> mArrayList;
 	public static final int MAX_ARRAY_LENGTH = 45;

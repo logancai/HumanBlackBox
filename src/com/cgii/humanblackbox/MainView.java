@@ -3,6 +3,7 @@ package com.cgii.humanblackbox;
 import android.content.Context;
 import android.hardware.SensorEvent;
 import android.os.Handler;
+import android.text.format.Time;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.widget.FrameLayout;
@@ -23,7 +24,10 @@ public class MainView extends FrameLayout{
     /** About 24 FPS, visible for testing. */
     static final long DELAY_MILLIS = 41;
     
-    private final TextView mAccelerationView;
+    private final TextView xAccelerationView;
+    private final TextView yAccelerationView;
+    private final TextView zAccelerationView;
+    private final TextView carModeView;
     
     private final Handler mHandler = new Handler();
     private final Runnable mUpdateTextRunnable = new Runnable() {
@@ -54,8 +58,18 @@ public class MainView extends FrameLayout{
         super(context, attrs, style);
         LayoutInflater.from(context).inflate(R.layout.card_view, this);
 
-        mAccelerationView = (TextView) findViewById(R.id.acceleration);
-//        setBaseMillis(getElapsedRealtime());
+        xAccelerationView = (TextView) findViewById(R.id.Xacceleration);
+        yAccelerationView = (TextView) findViewById(R.id.Yacceleration);
+        zAccelerationView = (TextView) findViewById(R.id.Zacceleration);
+        carModeView = (TextView) findViewById(R.id.CarMode);
+        TextView appName = (TextView) findViewById(R.id.footer);
+//        TextView timeView = (TextView) findViewById(R.id.timestamp);
+		appName.setText("HumanBlackBox");
+//		Time time =new Time(Time.getCurrentTimezone());	
+//		
+//		timeView.setText(Integer.toString(time.hour) + Integer.toString(time.minute) 
+//				+ Integer.toString(time.second));
+		
         updateText();
     }
     
@@ -123,9 +137,10 @@ public class MainView extends FrameLayout{
 //    	mAccelerationView.setText(Integer.toString(count));
 //    	count += 1;
     	if (event != null){
-    		mAccelerationView.setText(/*"X: "+*/ Float.toString(event.values[0]) +
-    				" Y: "+ Float.toString(event.values[1]) +
-    				" Z: "+ Float.toString(event.values[2]));
+    		xAccelerationView.setText("X: "+ Float.toString(event.values[0]));
+    		yAccelerationView.setText("Y: "+ Float.toString(event.values[1]));
+    		zAccelerationView.setText("Z: "+ Float.toString(event.values[2]));
+    		carModeView.setText("Car Mode: "+Boolean.toString(Services.carMode));
     	}
     	
         if (mChangeListener != null) {

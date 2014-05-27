@@ -20,25 +20,54 @@ public final class R {
          would include 7" and 10" devices in landscape (~960dp and ~1280dp respectively).
     
          */
-        public static final int activity_horizontal_margin=0x7f070001;
+        public static final int activity_horizontal_margin=0x7f070006;
         public static final int card_margin=0x7f070000;
+        /**  The maximum height of the body content inside a card. 
+         */
+        public static final int glass_card_body_height=0x7f070004;
+        /**  The recommended margin between the bottom of the card and the footer. This is
+         an adjusted value so that the baseline of the text in the footer sits 40px
+         from the bottom of the card, matching the other margins. 
+         */
+        public static final int glass_card_footer_margin=0x7f070002;
+        /**  The width of the left column in the two-column layout. 
+         */
+        public static final int glass_card_left_column_width=0x7f070005;
+        /**  The recommended margin for the top, left, and right edges of a card. 
+         */
+        public static final int glass_card_margin=0x7f070001;
+        /**  The recommended margin for the left column of the two-column card. 
+         */
+        public static final int glass_card_two_column_margin=0x7f070003;
     }
     public static final class drawable {
         public static final int gradient50=0x7f020000;
         public static final int ic_camera_50=0x7f020001;
         public static final int ic_compass=0x7f020002;
-        public static final int ic_launcher=0x7f020003;
-        public static final int ic_location_50=0x7f020004;
-        public static final int ic_read_aloud=0x7f020005;
-        public static final int ic_stop=0x7f020006;
-        public static final int ic_sync_50=0x7f020007;
+        public static final int ic_drive_50=0x7f020003;
+        public static final int ic_launcher=0x7f020004;
+        public static final int ic_location_50=0x7f020005;
+        public static final int ic_read_aloud=0x7f020006;
+        public static final int ic_stop=0x7f020007;
+        public static final int ic_sync_50=0x7f020008;
+        public static final int owl=0x7f020009;
+        public static final int owl1=0x7f02000a;
     }
     public static final class id {
-        public static final int acceleration=0x7f0b0001;
-        public static final int record_video=0x7f0b0002;
+        public static final int CarMode=0x7f0b0006;
+        public static final int Xacceleration=0x7f0b0003;
+        public static final int Yacceleration=0x7f0b0004;
+        public static final int Zacceleration=0x7f0b0005;
+        public static final int car_mode=0x7f0b000a;
+        public static final int footer=0x7f0b0008;
+        public static final int footer_container=0x7f0b0007;
+        public static final int imageView1=0x7f0b0002;
+        public static final int left_column=0x7f0b0001;
+        public static final int record_video=0x7f0b000c;
         public static final int seconds=0x7f0b0000;
-        public static final int send_location=0x7f0b0003;
-        public static final int stop=0x7f0b0004;
+        public static final int send_location=0x7f0b000b;
+        public static final int stop=0x7f0b000d;
+        public static final int timestamp=0x7f0b0009;
     }
     public static final class layout {
         public static final int card_countdown=0x7f030000;
@@ -54,6 +83,7 @@ public final class R {
     public static final class string {
         public static final int action_settings=0x7f080002;
         public static final int app_name=0x7f080000;
+        public static final int car_mode=0x7f080008;
         public static final int glass_voice_trigger=0x7f080005;
         public static final int hello_world=0x7f080001;
         public static final int read_aloud=0x7f080004;

@@ -102,24 +102,16 @@ public class MenuActivity extends Activity{
     }
     
     private static void launchCamera(Activity activity){
-//    	MenuActivity mMenuActivity = new MenuActivity();
-    	
 		Log.v(Services.TAG, "LaunchCamera called called");
     	Intent intent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
 		intent.putExtra(MediaStore.EXTRA_DURATION_LIMIT, recordingTimeInSeconds);
 		intent.putExtra(MediaStore.EXTRA_VIDEO_QUALITY, TAKE_VIDEO_REQUEST);
-		if (Services.mActivity == null){
+		if (activity == null){
 			Log.v(Services.TAG, "LaunchCamera activity is null");
 			Services.isRecording = false;
 		}
 		else{
-//			try{
-//				Log.v(Services.TAG, Services.mActivity.getCallingActivity().getClassName());
-//			}
-//			catch(NullPointerException e){
-//				Log.v(Services.TAG, "LaunchCamera activity null pointer");
-//			}
-			Services.mActivity.startActivityForResult(intent, TAKE_VIDEO_REQUEST);
+			activity.startActivityForResult(intent, 1);
 			postActivity();
 			Services.isRecording = false;
 		}

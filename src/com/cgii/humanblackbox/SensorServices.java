@@ -123,29 +123,39 @@ public class SensorServices extends Services implements SensorEventListener{
 				Services.mSensorEvent = event;
 				
 				/*
-				 * START: Math calculations goes here. AS OF RIGHT NOW my math does not work...
+				 * START: Math calculations goes here.
+				 * 
 				 * To call camera, you must do these 2 commands.
 				 * 1) Services.isRecording = true;
 				 * 2) startRecording();
 				 */
 				
+				/*
+				 * Start: This is to add the current values to the ArrayList
+				 */
 				if (mArrayList.size() > MAX_ARRAY_LENGTH){
 					mArrayList.remove(0);
 				}
 				SensorEventValues mSensorEventValues = 
 						new SensorEventValues(event.values[0],event.values[1],event.values[2]);
 				mArrayList.add(mSensorEventValues);
+				/*
+				 * End: This is to add the current values to the ArrayList
+				 */
 				
-				if(count < 10){
-					Log.v(Services.TAG, "////////Start of list");
-					for (int i = 0; i < mArrayList.size(); i++) {
-						Log.v(Services.TAG, i +":"+ Double.toString(mArrayList.get(i).values[0]));
-					}
-					Log.v(Services.TAG, "Mean" +":"+ Double.toString(meanX()));
-					Log.v(Services.TAG, "Variance" +":"+ Double.toString(varianceX()));
-					Log.v(Services.TAG, "////////End of list");
-					count++;
-				}
+				/*
+				 * Start: calculate the mean and variance
+				 * Note: meanX() must be called before varianceX()
+				 * or else your variance will be wrong.
+				 * Optimization tip; if you ever need to call meanX() again
+				 * use meanValueX so it does not need to recalculate
+				 */
+				
+				meanX();
+				Log.v(Services.TAG, "Variance" +":"+ Double.toString(varianceX()));
+				/*
+				 * End: of mean and variance calculation
+				 */
 				
 				/*
 				 * End: Math calculation goes here.

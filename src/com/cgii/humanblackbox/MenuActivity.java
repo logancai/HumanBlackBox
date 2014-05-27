@@ -49,7 +49,7 @@ public class MenuActivity extends Activity{
 	
 	@Override
     public boolean onCreateOptionsMenu(Menu menu) {
-		Log.v(Services.TAG, "onCreateMenus");
+		Log.v(Services.TAG, "MenuActivity onCreateOptionsMenu");
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.main, menu);
         return true;
@@ -57,7 +57,7 @@ public class MenuActivity extends Activity{
 	
 	@Override
     public boolean onOptionsItemSelected(MenuItem item) {
-		Log.v(Services.TAG, "onOptionSelected");
+		Log.v(Services.TAG, "MenuActivity onOptionSelected");
 		// Handle item selection.
         switch (item.getItemId()) {
             case R.id.stop:
@@ -90,7 +90,8 @@ public class MenuActivity extends Activity{
 	@Override
     public void onOptionsMenuClosed(Menu menu) {
         // Nothing else to do, closing the Activity.
-        finish();
+		Log.v(Services.TAG, "MenuActivity onOptionMenu");
+		finish();
     }
 	
 	/**
@@ -111,6 +112,8 @@ public class MenuActivity extends Activity{
 		}
 		else{
 			activity.startActivityForResult(intent, 1);
+			postActivity();
+			Services.isRecording = false;
 		}
     }
     
@@ -124,6 +127,10 @@ public class MenuActivity extends Activity{
     		}
     	}
     };
+    
+    public static void postActivity(){
+    	Log.v(Services.TAG, "postActivity called");
+    }
     
     @Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -140,16 +147,16 @@ public class MenuActivity extends Activity{
 	    }
 	    Services.isRecording = false;
 	    
-	    File file = new File(data.getStringExtra(
-                CameraManager.EXTRA_PICTURE_FILE_PATH));
-	    Uri uri = Uri.fromFile(file);
-	    Bitmap bitmap = ThumbnailUtils.createVideoThumbnail(uri.getPath(), MediaStore.Video.Thumbnails.MICRO_KIND);
-	    Card card = new Card(this);
-	    card.setImageLayout(Card.ImageLayout.LEFT);
-	    card.addImage(bitmap);
-	    card.setText("A new recording!");
-	    card.setFootnote("HumanBlackBox");
-	    View cardView = card.getView();
+//	    File file = new File(data.getStringExtra(
+//                CameraManager.EXTRA_PICTURE_FILE_PATH));
+//	    Uri uri = Uri.fromFile(file);
+//	    Bitmap bitmap = ThumbnailUtils.createVideoThumbnail(uri.getPath(), MediaStore.Video.Thumbnails.MICRO_KIND);
+//	    Card card = new Card(this);
+//	    card.setImageLayout(Card.ImageLayout.LEFT);
+//	    card.addImage(bitmap);
+//	    card.setText("A new recording!");
+//	    card.setFootnote("HumanBlackBox");
+//	    View cardView = card.getView();
 	    
 	    super.onActivityResult(requestCode, resultCode, data);
 	}

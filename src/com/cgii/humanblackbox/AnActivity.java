@@ -50,21 +50,21 @@ public class AnActivity extends Activity{
 //    	}
 //    };
 //    
-//    @Override
-//	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-//    	Log.v(Services.TAG, "onActivityResult called");
-//    	Log.v(Services.TAG, "requestCode: " + requestCode);
-//    	Log.v(Services.TAG, "resultCode: " + resultCode);
-//	    if (requestCode == TAKE_VIDEO_REQUEST && resultCode == RESULT_OK) {
-//	        String picturePath = data.getStringExtra(
-//	                CameraManager.EXTRA_PICTURE_FILE_PATH);
-//	        
-////	        Services.isRecording = false;
-//			Log.v(Services.TAG, "The isRecording Booleans is now: "+Services.isRecording + " it should be false");
-////	        processPictureWhenReady(picturePath);
-//	    }
-//	    Services.isRecording = false;
-//	    
+    @Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    	Log.v(Services.TAG, "onActivityResult called");
+    	Log.v(Services.TAG, "requestCode: " + requestCode);
+    	Log.v(Services.TAG, "resultCode: " + resultCode);
+	    if (requestCode == TAKE_VIDEO_REQUEST && resultCode == RESULT_OK) {
+	        String picturePath = data.getStringExtra(
+	                CameraManager.EXTRA_PICTURE_FILE_PATH);
+	        
+//	        Services.isRecording = false;
+			Log.v(Services.TAG, "The isRecording Booleans is now: "+Services.isRecording + " it should be false");
+//	        processPictureWhenReady(picturePath);
+	    }
+	    Services.isRecording = false;
+	    
 //	    File file = new File(data.getStringExtra(
 //                CameraManager.EXTRA_PICTURE_FILE_PATH));
 //	    Uri uri = Uri.fromFile(file);
@@ -75,7 +75,7 @@ public class AnActivity extends Activity{
 //	    card.setText("A new recording!");
 //	    card.setFootnote("HumanBlackBox");
 //	    View cardView = card.getView();
-//	    
-//	    super.onActivityResult(requestCode, resultCode, data);
-//	}
+	    
+	    super.onActivityResult(requestCode, resultCode, data);
+	}
 }

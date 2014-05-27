@@ -1,5 +1,7 @@
 package com.cgii.humanblackbox;
 
+import java.util.ArrayList;
+
 import android.app.Activity;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -28,6 +30,10 @@ public class Services extends Service {
 	public static boolean isRecording;
 	public static Activity mActivity;
 	MenuActivity mMenuActivity;
+	
+	public static ArrayList<SensorEvent> mArrayList;
+//	public static SensorEvent[] mArrayList;
+	public static final int MAX_ARRAY_LENGTH = 45;
 	
 	
 	@Override

@@ -13,13 +13,12 @@ import android.util.Log;
 public class SensorServices extends Services implements SensorEventListener{
 	
 	public static boolean mTracking;
-	private ArrayList<SensorEvent> mArrayList;
-	private final int MAX_ARRAY_LENGTH = 45;
 	
 	public SensorServices() {
 		Log.v(Services.TAG, "SensorServices constructor");
 		mTracking = false;
 		Services.isRecording = false;
+		mArrayList = new ArrayList<SensorEvent>();
 	}
 	
 	/*
@@ -29,28 +28,81 @@ public class SensorServices extends Services implements SensorEventListener{
 	 * not going to be true because the user is usually sitting in 1 position
 	 */
 	
+	private double meanValueX, meanValueY, meanValueZ;
+	private double varianceValueX, varianceValueY, varianceValueZ;
+	private double standardDeviationValueX, standardDeviationValueY, standardDeviationValueZ;
+	
 	private double meanX(){
 		double sum = 0;
 		for(int i = 0; i < mArrayList.size(); i++){
 			sum += mArrayList.get(i).values[0];
 		}
-		return sum/mArrayList.size();
+		meanValueX = sum/mArrayList.size();
+		return meanValueX;
 	}
 	private double meanY(){
 		double sum = 0;
 		for(int i = 0; i < mArrayList.size(); i++){
 			sum += mArrayList.get(i).values[1];
 		}
-		return sum/mArrayList.size();
+		meanValueY = sum/mArrayList.size();
+		return meanValueY;
 	}
 	private double meanZ(){
 		double sum = 0;
 		for(int i = 0; i < mArrayList.size(); i++){
 			sum += mArrayList.get(i).values[2];
 		}
-		return sum/mArrayList.size();
+		meanValueZ = sum/mArrayList.size();
+		return meanValueZ;
 	}
-
+	private double varianceX(){
+		double sum = 0;
+		for(int i = 0; i < mArrayList.size(); i++){
+			if(meanValueX == 0){
+				//In case you forget to call mean
+				meanX();
+			}
+			double value = mArrayList.get(i).values[0] - meanValueX;
+			value = value * value;
+			sum += value;
+		}
+		varianceValueX = sum/mArrayList.size();
+//		standardDeviationValueX = Math.sqrt(varianceValueX);
+		return varianceValueX;
+	}
+	private double varianceY(){
+		double sum = 0;
+		if(meanValueY == 0){
+			//In case you forget to call mean
+			meanY();
+		}
+		for(int i = 0; i < mArrayList.size(); i++){
+			double value = mArrayList.get(i).values[1] - meanValueY;
+			value = value * value;
+			sum += value;
+		}
+		varianceValueY = sum/mArrayList.size();
+//		standardDeviationValueY = Math.sqrt(varianceValueY);
+		return varianceValueY;
+	}
+	private double varianceZ(){
+		double sum = 0;
+		if(meanValueZ == 0){
+			//In case you forget to call mean
+			meanZ();
+		}
+		for(int i = 0; i < mArrayList.size(); i++){
+			double value = mArrayList.get(i).values[2] - meanValueZ;
+			value = value * value;
+			sum += value;
+		}
+		varianceValueZ = sum/mArrayList.size();
+//		standardDeviationValueZ = Math.sqrt(varianceValueZ);
+		return varianceValueZ;
+	}
+	
+	int count = 0;
 	@Override
 	public void onSensorChanged(SensorEvent event) {
 		if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER){
@@ -68,9 +120,26 @@ public class SensorServices extends Services implements SensorEventListener{
 				if (mArrayList.size() > MAX_ARRAY_LENGTH){
 					mArrayList.remove(0);
 				}
-				else{
-					mArrayList.add(event);
+//				mArrayList.add(event);
+				mArrayList.add(mArrayList.size(), event);
+				
+				if(count < 10){
+					Log.v(Services.TAG, "////////Start of list");
+					for (int i = 0; i < mArrayList.size(); i++) {
+						Log.v(Services.TAG, i +":"+ Double.toString(mArrayList.get(i).values[0]));
+					}
+					Log.v(Services.TAG, "Mean" +":"+ Double.toString(meanX()));
+					Log.v(Services.TAG, "Variance" +":"+ Double.toString(varianceX()));
+					Log.v(Services.TAG, "////////End of list");
+					count++;
 				}
+				
+				
+				
+				
+//				Log.v(Services.TAG, "X variance is: "+ Double.toString(varianceX()));
+//				Log.v(Services.TAG, "Y average is: "+ Double.toString(meanY()));
+//				Log.v(Services.TAG, "Z average is: "+ Double.toString(meanZ()));
 				
 				/*
 				 * End: Math calculation goes here.
@@ -84,9 +153,8 @@ public class SensorServices extends Services implements SensorEventListener{
 						event.values[2]*event.values[2]);
 				if (vector > 15){
 					Log.v(Services.TAG, ">15 launching camera...");
-					Services.isRecording = true;
-					startRecording();
-					
+//					Services.isRecording = true;
+//					startRecording();
 				}
 				/*
 				 * END: Keep this code for demo.
@@ -104,7 +172,7 @@ public class SensorServices extends Services implements SensorEventListener{
 		if (!mTracking) {
 			Services.mSensorManager.registerListener(this, 
 					Services.mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), 
-					SensorManager.SENSOR_DELAY_FASTEST);
+					SensorManager.SENSOR_DELAY_GAME);
 		}
 		mTracking = true;
 		

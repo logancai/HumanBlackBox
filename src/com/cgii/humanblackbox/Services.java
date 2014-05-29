@@ -32,7 +32,7 @@ public class Services extends Service {
 	public static boolean isRecording;
 	public static Activity mActivity;
 	MenuActivity mMenuActivity;
-	public static boolean carMode;
+	public static boolean demoMode;
 	
 	public static ArrayList<SensorEventValues> mArrayList;
 	public static final int MAX_ARRAY_LENGTH = 45;

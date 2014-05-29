@@ -16,7 +16,7 @@
 
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     
-    <item android:id="@+id/car_mode" android:title="@string/car_mode" android:icon="@drawable/ic_drive_50" /><item android:id="@+id/send_location" android:title="@string/send_location" android:icon="@drawable/ic_location_50" /><item
+    <item android:id="@+id/demo_mode" android:title="@string/car_mode" android:icon="@drawable/ic_drive_50" /><item android:id="@+id/send_location" android:title="@string/send_location" android:icon="@drawable/ic_location_50" /><item
         android:id="@+id/record_video"
         android:title="@string/record_video"
         android:icon="@drawable/ic_camera_50"/>

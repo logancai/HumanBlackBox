@@ -140,7 +140,7 @@ public class MainView extends FrameLayout{
     		xAccelerationView.setText("X: "+ Float.toString(event.values[0]));
     		yAccelerationView.setText("Y: "+ Float.toString(event.values[1]));
     		zAccelerationView.setText("Z: "+ Float.toString(event.values[2]));
-    		carModeView.setText("Car Mode: "+Boolean.toString(Services.carMode));
+    		carModeView.setText("Demo Mode: "+Boolean.toString(Services.demoMode));
     	}
     	
         if (mChangeListener != null) {

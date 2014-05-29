@@ -96,12 +96,12 @@ public class MenuActivity extends Activity{
             	Services.isRecording = true;
             	SensorServices.startRecording();
         		return true;
-            case R.id.car_mode:
-            	if(Services.carMode){
-            		Services.carMode = false;
+            case R.id.demo_mode:
+            	if(Services.demoMode){
+            		Services.demoMode = false;
             	}
             	else{
-            		Services.carMode = true;
+            		Services.demoMode = true;
             	}
             	return true;
             default:

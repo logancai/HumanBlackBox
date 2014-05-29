@@ -29,27 +29,32 @@ public class SensorServices extends Services implements SensorEventListener{
 	public static boolean mTracking;
 	
 	/*
-	 * Olivia code
+	 * Start: Byron code
 	 */
-	private double X,Y,Z,mag;
-	private double jerk;
-	private double jerkx;
-	private double jerky;
-	private double jerkz;
-	private double time;
-	private int count=0;// every new time the class is called or services.java, it will start with count 0; letting us take an inital reading 
-    private SensorManager mSensorManager;
-    private Sensor mSensor;
-    private double now;
-	
+	float v_0x = 0;
+	float v_0y = 0;
+	float v_0z = 0;
+	Time timeStart;
+	long timestart;
+//	double meanx = meanX();
+//	double meany = meanY();
+//	double means = meanZ();
+	double Dstoppedx;
+	double Dstoppedy; 
+	double Dstoppedz;
+	double D_sx;
+	double D_sy;
+	double D_sz; 
 	/*
-	 * Olivia code
+	 * End: Byron code
 	 */
 	public SensorServices() {
 		Log.v(Services.TAG, "SensorServices constructor");
 		mTracking = false;
 		Services.isRecording = false;
 		mArrayList = new ArrayList<SensorEventValues>();
+		timeStart = new Time(Time.getCurrentTimezone());
+		timestart = timeStart.toMillis(true);
 	}
 	
 	/*
@@ -138,18 +143,8 @@ public class SensorServices extends Services implements SensorEventListener{
 	public void onSensorChanged(SensorEvent event) {
 		if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER){
 			if (Services.isRecording == false){
-				//Can write directly to view here with the values
+				
 				Services.mSensorEvent = event;
-				
-				
-				/*
-				 * START: Math calculations goes here.
-				 * 
-				 * To call camera, you must do these 2 commands.
-				 * 1) Services.isRecording = true;
-				 * 2) startRecording();
-				 */
-				
 				/*
 				 * Start: This is to add the current values to the ArrayList
 				 */
@@ -163,46 +158,77 @@ public class SensorServices extends Services implements SensorEventListener{
 				 * End: This is to add the current values to the ArrayList
 				 */
 				
-				/*
-				 * Start: calculate the mean and variance
-				 * Note: meanX() must be called before varianceX()
-				 * or else your variance will be wrong.
-				 * Optimization tip; if you ever need to call meanX() again
-				 * use meanValueX so it does not need to recalculate
-				 */
-				
-//				meanX();
-//				meanY();
-//				Log.v(Services.TAG, "Mean" +":"+ Double.toString(meanX()));
-//				Log.v(Services.TAG, "Variance" +":"+ Double.toString(varianceX()));
-//				Log.v(Services.TAG, "Variance" +":"+ Double.toString(varianceY()));
-				/*
-				 * End: of mean and variance calculation
-				 */
-				
-				/*
-				 * End: Math calculation goes here.
-				 */
-				
-				/*
-				 * START: Keep this code for demo.
-				 */
-				double vector = Math.sqrt(event.values[0]*event.values[0]+
-						event.values[1]*event.values[1]+
-						event.values[2]*event.values[2]);
-				double variancez=varianceZ();
-				double variancey=varianceY();
-				double variancex=varianceX();
-				if (vector > 15){
-					if(varianceX()>40||varianceY()>40||varianceZ()>40){
-					Log.v(Services.TAG, ">15 launching camera...");
+				if (Services.demoMode){
+					/*
+					 * START: Keep this code for demo.
+					 */
+					double vector = Math.sqrt(event.values[0]*event.values[0]+
+							event.values[1]*event.values[1]+
+							event.values[2]*event.values[2]);
+					double variancez=varianceZ();
+					double variancey=varianceY();
+					double variancex=varianceX();
+					if (vector > 15){
+						if(varianceX()>40||varianceY()>40||varianceZ()>40){
+						Log.v(Services.TAG, ">15 launching camera...");
+						}
+//						Services.isRecording = true;
+//						startRecording();
 					}
-//					Services.isRecording = true;
-//					startRecording();
+					/*
+					 * END: Keep this code for demo.
+					 */
 				}
-				/*
-				 * END: Keep this code for demo.
-				 */
+				else{
+					/*
+					 * START: Math calculations goes here.
+					 * 
+					 * To call camera, you must do these 2 commands.
+					 * 1) Services.isRecording = true;
+					 * 2) startRecording();
+					 */
+					
+					/*
+					 * Start: calculate the mean and variance
+					 * Note: meanX() must be called before varianceX()
+					 * or else your variance will be wrong.
+					 * Optimization tip; if you ever need to call meanX() again
+					 * use meanValueX so it does not need to recalculate
+					 */
+					long now = new Time(Time.getCurrentTimezone()).toMillis(true);
+					if(now != timestart){
+						long deltaT = now - timestart;
+						v_0x = v_0x + event.values[0]*deltaT;
+						v_0y = v_0y + event.values[1]*deltaT;
+						v_0z = v_0z + event.values[2]*deltaT;
+					}
+					
+					if(event.values[2] < 0){
+						D_sx = -(v_0x*v_0x)/(2*event.values[0]);	
+						D_sy = -(v_0y*v_0y)/(2*event.values[1]);	
+						D_sz = -(v_0z*v_0z)/(2*event.values[2]);		
+						while(event.values[2] < 0){
+							Dstoppedx = Dstoppedx + event.values[0];
+							Dstoppedy = Dstoppedy + event.values[1];
+							Dstoppedz = Dstoppedz + event.values[2];
+							if(event.values[2] > -2 || event.values[2] < 2 && varianceZ() > 40){
+								if(Dstoppedz < D_sz){
+									Log.v(Services.TAG, "math = dangerous = launching camera...");
+//									Services.isRecording = true;
+//									startRecording();
+								}
+							}
+						}
+					}
+					
+					/*
+					 * End: of mean and variance calculation
+					 */
+					
+					/*
+					 * End: Math calculation goes here.
+					 */
+				}
 			}
 		}
 	}

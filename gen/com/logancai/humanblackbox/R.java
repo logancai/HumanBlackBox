@@ -51,14 +51,14 @@ public final class R {
         public static final int ic_stop=0x7f020007;
         public static final int ic_sync_50=0x7f020008;
         public static final int owl=0x7f020009;
-        public static final int owl1=0x7f02000a;
+        public static final int owlup=0x7f02000a;
     }
     public static final class id {
         public static final int CarMode=0x7f0b0006;
         public static final int Xacceleration=0x7f0b0003;
         public static final int Yacceleration=0x7f0b0004;
         public static final int Zacceleration=0x7f0b0005;
-        public static final int car_mode=0x7f0b000a;
+        public static final int demo_mode=0x7f0b000a;
         public static final int footer=0x7f0b0008;
         public static final int footer_container=0x7f0b0007;
         public static final int imageView1=0x7f0b0002;
@@ -84,6 +84,7 @@ public final class R {
         public static final int action_settings=0x7f080002;
         public static final int app_name=0x7f080000;
         public static final int car_mode=0x7f080008;
+        public static final int demo_mode=0x7f080009;
         public static final int glass_voice_trigger=0x7f080005;
         public static final int hello_world=0x7f080001;
         public static final int read_aloud=0x7f080004;

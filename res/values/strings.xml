@@ -10,5 +10,6 @@
     <string name="record_video">Record video</string>
     <string name="send_location">Send location to circle</string>
     <string name="car_mode">Car mode</string>
+    <string name="demo_mode">Demo mode</string>
 
 </resources>

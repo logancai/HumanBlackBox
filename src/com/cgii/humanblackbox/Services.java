@@ -9,13 +9,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.hardware.SensorEvent;
 import android.hardware.SensorManager;
+import android.location.LocationManager;
 import android.os.IBinder;
 import android.util.Log;
-import android.widget.TextView;
 
 import com.google.android.glass.timeline.LiveCard;
 import com.google.android.glass.timeline.LiveCard.PublishMode;
-import com.logancai.humanblackbox.R;
 
 public class Services extends Service {
 	
@@ -27,6 +26,7 @@ public class Services extends Service {
 	private Drawer mDrawer;
 	
 	public static SensorManager mSensorManager;
+	public static LocationManager mLocationManager;
 	public static SensorServices mSensorServices;
 	public static SensorEvent mSensorEvent;
 	public static boolean isRecording;
@@ -50,6 +50,10 @@ public class Services extends Service {
 		if (mSensorManager == null){
 			mSensorManager = 
 					(SensorManager) getSystemService(Context.SENSOR_SERVICE);
+		}
+		if (mLocationManager == null){
+			mLocationManager = 
+					(LocationManager) getSystemService(Context.LOCATION_SERVICE);
 		}
 		isRecording = false;
 	}

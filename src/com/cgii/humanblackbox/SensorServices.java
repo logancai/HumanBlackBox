@@ -7,6 +7,8 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.location.Location;
+import android.location.LocationListener;
 import android.os.Bundle;
 import android.os.Message;
 import android.text.format.Time;
@@ -24,7 +26,7 @@ class SensorEventValues {
 	}
 }
 
-public class SensorServices extends Services implements SensorEventListener{
+public class SensorServices extends Services implements SensorEventListener, LocationListener{
 	
 	public static boolean mTracking;
 	
@@ -34,8 +36,7 @@ public class SensorServices extends Services implements SensorEventListener{
 	float v_0x = 0;
 	float v_0y = 0;
 	float v_0z = 0;
-	Time timeStart;
-	long timestart;
+	Date timeStart;
 //	double meanx = meanX();
 //	double meany = meanY();
 //	double means = meanZ();
@@ -53,8 +54,8 @@ public class SensorServices extends Services implements SensorEventListener{
 		mTracking = false;
 		Services.isRecording = false;
 		mArrayList = new ArrayList<SensorEventValues>();
-		timeStart = new Time(Time.getCurrentTimezone());
-		timestart = timeStart.toMillis(true);
+		timeStart = new Date();
+		Log.v(Services.TAG, "SensorServices start time" + Long.toString(timeStart.getTime()));
 	}
 	
 	/*
@@ -169,11 +170,11 @@ public class SensorServices extends Services implements SensorEventListener{
 					double variancey=varianceY();
 					double variancex=varianceX();
 					if (vector > 15){
-						if(varianceX()>40||varianceY()>40||varianceZ()>40){
-						Log.v(Services.TAG, ">15 launching camera...");
+						if(variancex > 40||variancey > 40||variancez > 40){
+						Log.v(Services.TAG, "variance > 40, launching camera...");
 						}
-//						Services.isRecording = true;
-//						startRecording();
+						Services.isRecording = true;
+						startRecording();
 					}
 					/*
 					 * END: Keep this code for demo.
@@ -195,9 +196,10 @@ public class SensorServices extends Services implements SensorEventListener{
 					 * Optimization tip; if you ever need to call meanX() again
 					 * use meanValueX so it does not need to recalculate
 					 */
-					long now = new Time(Time.getCurrentTimezone()).toMillis(true);
-					if(now != timestart){
-						long deltaT = now - timestart;
+					Date now = new Date();
+					Log.v(Services.TAG, "SensorServices now: " + Long.toString(now.getTime()));
+					if(now.getTime() != timeStart.getTime()){
+						long deltaT = now.getTime() - timeStart.getTime();
 						v_0x = v_0x + event.values[0]*deltaT;
 						v_0y = v_0y + event.values[1]*deltaT;
 						v_0z = v_0z + event.values[2]*deltaT;
@@ -251,6 +253,7 @@ public class SensorServices extends Services implements SensorEventListener{
 	public void stop(){
 		if (mTracking) {
 			Services.mSensorManager.unregisterListener(this);
+			Services.mLocationManager.removeUpdates(this);
 			mTracking = false;
 		}
 	}
@@ -267,5 +270,26 @@ public class SensorServices extends Services implements SensorEventListener{
         msgObj.setData(b);
 //        AnActivity.cameraHandler.sendMessage(msgObj);
         MenuActivity.cameraHandler.sendMessage(msgObj);
+	}
+	
+	/*
+	 * Location services
+	 * onLocation, onStatusChanged, 
+	 */
+	@Override
+	public void onLocationChanged(Location location) {
+		
+	}
+	@Override
+	public void onStatusChanged(String provider, int status, Bundle extras) {
+		Log.d("Latitude + Longitude","status");
+	}
+	@Override
+	public void onProviderEnabled(String provider) {
+		Log.d("Latitude + Longitude","enable");
+	}
+	@Override
+	public void onProviderDisabled(String provider) {
+		Log.d("Latitude + Longitude","disable");
 	}
 }

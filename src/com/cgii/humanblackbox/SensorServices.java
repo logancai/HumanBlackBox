@@ -69,6 +69,7 @@ public class SensorServices extends Services implements SensorEventListener, Loc
 	private double varianceValueX, varianceValueY, varianceValueZ;
 	private double standardDeviationValueX, standardDeviationValueY, standardDeviationValueZ;
 	
+	@Deprecated
 	private double meanX(){
 		double sum = 0;
 		for(int i = 0; i < mArrayList.size(); i++){
@@ -77,6 +78,7 @@ public class SensorServices extends Services implements SensorEventListener, Loc
 		meanValueX = sum/mArrayList.size();
 		return meanValueX;
 	}
+	@Deprecated
 	private double meanY(){
 		double sum = 0;
 		for(int i = 0; i < mArrayList.size(); i++){
@@ -85,6 +87,7 @@ public class SensorServices extends Services implements SensorEventListener, Loc
 		meanValueY = sum/mArrayList.size();
 		return meanValueY;
 	}
+	@Deprecated
 	private double meanZ(){
 		double sum = 0;
 		for(int i = 0; i < mArrayList.size(); i++){
@@ -93,6 +96,37 @@ public class SensorServices extends Services implements SensorEventListener, Loc
 		meanValueZ = sum/mArrayList.size();
 		return meanValueZ;
 	}
+	private double calculateMeanX(){
+		meanValueX *= Services.mArrayList.size();
+		if (mArrayList.size() > 0){
+			int largest = mArrayList.size();
+			largest--;
+			meanValueX += Services.mArrayList.get(largest).values[0];
+			meanValueX /= mArrayList.size();
+		}
+		return meanValueX;
+	}
+	private double calculateMeanY(){
+		meanValueY *= Services.mArrayList.size();
+		if (mArrayList.size() > 0){
+			int largest = mArrayList.size();
+			largest--;
+			meanValueY += Services.mArrayList.get(largest).values[1];
+			meanValueY /= mArrayList.size();
+		}
+		return meanValueY;
+	}
+	private double calculateMeanZ(){
+		meanValueZ *= Services.mArrayList.size();
+		if (mArrayList.size() > 0){
+			int largest = mArrayList.size();
+			largest--;
+			meanValueZ += Services.mArrayList.get(largest).values[2];
+			meanValueZ /= mArrayList.size();
+		}
+		return meanValueZ;
+	}
+	
 	private double varianceX(){
 		double sum = 0;
 		for(int i = 0; i < mArrayList.size(); i++){
@@ -166,11 +200,8 @@ public class SensorServices extends Services implements SensorEventListener, Loc
 					double vector = Math.sqrt(event.values[0]*event.values[0]+
 							event.values[1]*event.values[1]+
 							event.values[2]*event.values[2]);
-					double variancez=varianceZ();
-					double variancey=varianceY();
-					double variancex=varianceX();
 					if (vector > 15){
-						if(variancex > 40||variancey > 40||variancez > 40){
+						if(varianceX() > 40||varianceY() > 40||varianceZ() > 40){
 						Log.v(Services.TAG, "variance > 40, launching camera...");
 						}
 						Services.isRecording = true;
@@ -197,7 +228,7 @@ public class SensorServices extends Services implements SensorEventListener, Loc
 					 * use meanValueX so it does not need to recalculate
 					 */
 					Date now = new Date();
-					Log.v(Services.TAG, "SensorServices now: " + Long.toString(now.getTime()));
+//					Log.v(Services.TAG, "SensorServices now: " + Long.toString(now.getTime()));
 					if(now.getTime() != timeStart.getTime()){
 						long deltaT = now.getTime() - timeStart.getTime();
 						v_0x = v_0x + event.values[0]*deltaT;
@@ -209,18 +240,18 @@ public class SensorServices extends Services implements SensorEventListener, Loc
 						D_sx = -(v_0x*v_0x)/(2*event.values[0]);	
 						D_sy = -(v_0y*v_0y)/(2*event.values[1]);	
 						D_sz = -(v_0z*v_0z)/(2*event.values[2]);		
-						while(event.values[2] < 0){
-							Dstoppedx = Dstoppedx + event.values[0];
-							Dstoppedy = Dstoppedy + event.values[1];
-							Dstoppedz = Dstoppedz + event.values[2];
-							if(event.values[2] > -2 || event.values[2] < 2 && varianceZ() > 40){
-								if(Dstoppedz < D_sz){
-									Log.v(Services.TAG, "math = dangerous = launching camera...");
-//									Services.isRecording = true;
-//									startRecording();
-								}
-							}
-						}
+//						while(event.values[2] < 0){
+//							Dstoppedx = Dstoppedx + event.values[0];
+//							Dstoppedy = Dstoppedy + event.values[1];
+//							Dstoppedz = Dstoppedz + event.values[2];
+//							if(event.values[2] > -2 || event.values[2] < 2 && varianceZ() > 40){
+//								if(Dstoppedz < D_sz){
+//									Log.v(Services.TAG, "math = dangerous = launching camera...");
+////									Services.isRecording = true;
+////									startRecording();
+//								}
+//							}
+//						}
 					}
 					
 					/*

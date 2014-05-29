@@ -45,13 +45,14 @@ public final class R {
         public static final int ic_camera_50=0x7f020001;
         public static final int ic_compass=0x7f020002;
         public static final int ic_drive_50=0x7f020003;
-        public static final int ic_launcher=0x7f020004;
-        public static final int ic_location_50=0x7f020005;
-        public static final int ic_read_aloud=0x7f020006;
-        public static final int ic_stop=0x7f020007;
-        public static final int ic_sync_50=0x7f020008;
-        public static final int owl=0x7f020009;
-        public static final int owlup=0x7f02000a;
+        public static final int ic_gear_50=0x7f020004;
+        public static final int ic_launcher=0x7f020005;
+        public static final int ic_location_50=0x7f020006;
+        public static final int ic_read_aloud=0x7f020007;
+        public static final int ic_stop=0x7f020008;
+        public static final int ic_sync_50=0x7f020009;
+        public static final int owl=0x7f02000a;
+        public static final int owlup=0x7f02000b;
     }
     public static final class id {
         public static final int CarMode=0x7f0b0006;

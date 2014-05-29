@@ -9,6 +9,7 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.os.Message;
+import android.text.format.Time;
 import android.util.Log;
 
 class SensorEventValues {
@@ -27,6 +28,23 @@ public class SensorServices extends Services implements SensorEventListener{
 	
 	public static boolean mTracking;
 	
+	/*
+	 * Olivia code
+	 */
+	private double X,Y,Z,mag;
+	private double jerk;
+	private double jerkx;
+	private double jerky;
+	private double jerkz;
+	private double time;
+	private int count=0;// every new time the class is called or services.java, it will start with count 0; letting us take an inital reading 
+    private SensorManager mSensorManager;
+    private Sensor mSensor;
+    private double now;
+	
+	/*
+	 * Olivia code
+	 */
 	public SensorServices() {
 		Log.v(Services.TAG, "SensorServices constructor");
 		mTracking = false;
@@ -115,13 +133,14 @@ public class SensorServices extends Services implements SensorEventListener{
 		return varianceValueZ;
 	}
 	
-	int count = 0;
+//	int count = 0;
 	@Override
 	public void onSensorChanged(SensorEvent event) {
 		if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER){
 			if (Services.isRecording == false){
 				//Can write directly to view here with the values
 				Services.mSensorEvent = event;
+				
 				
 				/*
 				 * START: Math calculations goes here.
@@ -153,10 +172,10 @@ public class SensorServices extends Services implements SensorEventListener{
 				 */
 				
 //				meanX();
-				meanY();
+//				meanY();
 //				Log.v(Services.TAG, "Mean" +":"+ Double.toString(meanX()));
 //				Log.v(Services.TAG, "Variance" +":"+ Double.toString(varianceX()));
-				Log.v(Services.TAG, "Variance" +":"+ Double.toString(varianceY()));
+//				Log.v(Services.TAG, "Variance" +":"+ Double.toString(varianceY()));
 				/*
 				 * End: of mean and variance calculation
 				 */
@@ -171,8 +190,13 @@ public class SensorServices extends Services implements SensorEventListener{
 				double vector = Math.sqrt(event.values[0]*event.values[0]+
 						event.values[1]*event.values[1]+
 						event.values[2]*event.values[2]);
+				double variancez=varianceZ();
+				double variancey=varianceY();
+				double variancex=varianceX();
 				if (vector > 15){
+					if(varianceX()>40||varianceY()>40||varianceZ()>40){
 					Log.v(Services.TAG, ">15 launching camera...");
+					}
 //					Services.isRecording = true;
 //					startRecording();
 				}

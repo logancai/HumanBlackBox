@@ -40,6 +40,20 @@ public class MenuActivity extends Activity{
 	}
 	
 	@Override
+	protected void onResume(){
+		super.onResume();
+		Log.v(Services.TAG, "MenuActivity onResume");
+		Services.mActivity = this;
+	}
+	
+	@Override
+	protected void onPause(){
+		super.onPause();
+		Log.v(Services.TAG, "MenuActivity onPause");
+		Services.mActivity = this;
+	}
+	
+	@Override
     public void onAttachedToWindow() {
 		Log.v(Services.TAG, "MenuActivity onAttach");
 		Services.mActivity = this;

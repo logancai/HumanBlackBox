@@ -362,28 +362,6 @@ public class SensorServices extends Services implements SensorEventListener{
 			//geocoder will convert latitude/longitude to address
 			Log.v(Services.TAG, "SensorServices onLocationChanged");
 			getAddress();
-//			Services.address = Double.toString(location.getLatitude());
-//			Services.zipCode = Double.toString(location.getLongitude());
-//			Geocoder geocoder = new Geocoder(mMenuActivity, Locale.getDefault());
-//			List<Address> addressses = null;
-//			try 
-//			{
-//				addressses = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
-//				
-//			} catch (IOException e)
-//			{
-//				e.printStackTrace();
-//				Log.v(Services.TAG, "SensorServices unable to get location");
-//			}
-//			if (addressses != null){
-//				Services.address = addressses.get(0).getAddressLine(0);
-//				Services.city = addressses.get(0).getAddressLine(1);
-//				Services.country = addressses.get(0).getAddressLine(2);
-//				Services.zipCode = addressses.get(0).getPostalCode();
-//			}
-//			else{
-//				Log.e(Services.TAG, "Address is null");
-//			}
 		}
 
 		@Override

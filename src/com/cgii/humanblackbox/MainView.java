@@ -141,12 +141,23 @@ public class MainView extends FrameLayout{
 //    	count += 1;
     	if (event != null){
     		//Always show stuff
-    		xAccelerationView.setText("X: "+ Float.toString(event.values[0]));
-    		yAccelerationView.setText("Y: "+ Float.toString(event.values[1]));
-    		zAccelerationView.setText("Z: "+ Float.toString(event.values[2]));
     		carModeView.setText("Demo Mode: "+Boolean.toString(Services.demoMode));
     		addressView.setText(/*"Current location: " + */Services.address + " " + 
     				Services.zipCode);
+    		if (Services.demoMode){
+    			xAccelerationView.setVisibility(View.VISIBLE);
+    			yAccelerationView.setVisibility(View.VISIBLE);
+    			zAccelerationView.setVisibility(View.VISIBLE);
+    			xAccelerationView.setText("X: "+ Float.toString(event.values[0]));
+        		yAccelerationView.setText("Y: "+ Float.toString(event.values[1]));
+        		zAccelerationView.setText("Z: "+ Float.toString(event.values[2]));
+    		}
+    		else{
+    			xAccelerationView.setVisibility(View.INVISIBLE);
+    			yAccelerationView.setVisibility(View.INVISIBLE);
+    			zAccelerationView.setVisibility(View.INVISIBLE);
+    		}
+    		
     	}
     	
         if (mChangeListener != null) {

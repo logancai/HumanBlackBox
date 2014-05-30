@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.MediaStore;
+import android.telephony.SmsManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -102,6 +103,24 @@ public class MenuActivity extends Activity{
             	else{
             		Services.demoMode = true;
             	}
+            	return true;
+            case R.id.send_location:
+            	Intent intent = new Intent(Intent.ACTION_SEND);
+            	intent.setType("text/plain");
+            	intent.putExtra(Intent.EXTRA_EMAIL, new String[]{"logan.cai@gmail.com"});
+            	intent.putExtra(Intent.EXTRA_SUBJECT, 
+            			"Help, I'm at "+ Services.address + " " + Services.zipCode);
+            	try{
+            		startActivity(intent);
+            	}
+            	catch(Exception e){
+            		e.printStackTrace();
+            		Log.v(Services.TAG, "MenuActivity failed to send email");
+            	}
+            	
+//            	String number = "8317088522";
+//            	SmsManager.getDefault().sendTextMessage(number, null, 
+//            			"Help, I'm at "+ Services.address + " " + Services.zipCode, null,null);
             	return true;
             default:
                 return super.onOptionsItemSelected(item);

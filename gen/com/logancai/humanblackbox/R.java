@@ -55,11 +55,11 @@ public final class R {
         public static final int owlup=0x7f02000b;
     }
     public static final class id {
-        public static final int CarMode=0x7f0b0007;
-        public static final int Xacceleration=0x7f0b0003;
-        public static final int Yacceleration=0x7f0b0004;
-        public static final int Zacceleration=0x7f0b0005;
-        public static final int addresss=0x7f0b0006;
+        public static final int CarMode=0x7f0b0004;
+        public static final int Xacceleration=0x7f0b0005;
+        public static final int Yacceleration=0x7f0b0006;
+        public static final int Zacceleration=0x7f0b0007;
+        public static final int addresss=0x7f0b0003;
         public static final int demo_mode=0x7f0b000b;
         public static final int footer=0x7f0b0009;
         public static final int footer_container=0x7f0b0008;

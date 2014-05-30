@@ -58,9 +58,9 @@ public class SensorServices extends Services implements SensorEventListener{
 	/*
 	 * Start: Byron code
 	 */
-	float v_0x = 0;
-	float v_0y = 0;
-	float v_0z = 0;
+	double v_0x = 0;
+	double v_0y = 0;
+	double v_0z = 0;
 	Date timeStart;
 //	double meanx = meanX();
 //	double meany = meanY();
@@ -70,7 +70,8 @@ public class SensorServices extends Services implements SensorEventListener{
 	double Dstoppedz;
 	double D_sx;
 	double D_sy;
-	double D_sz; 
+	double D_sz;
+	double deltaT = 50d/1000d;
 	/*
 	 * End: Byron code
 	 */
@@ -238,30 +239,31 @@ public class SensorServices extends Services implements SensorEventListener{
 					 */
 					Date now = new Date();
 //					Log.v(Services.TAG, "SensorServices now: " + Long.toString(now.getTime()));
-					if(now.getTime() != timeStart.getTime()){
-						long deltaT = now.getTime() - timeStart.getTime();
-						v_0x = v_0x + event.values[0]*deltaT;
-						v_0y = v_0y + event.values[1]*deltaT;
-						v_0z = v_0z + event.values[2]*deltaT;
+//					if(now.getTime() != timeStart.getTime()){
+//						long deltaT = now.getTime() - timeStart.getTime();
+						//Log.v(Services.TAG,"Delta: " + Double.toString(deltaT));
+						//v_0x = (v_0x + event.values[0]*deltaT);
+						//v_0y = (v_0y + (event.values[1]-9.8)*deltaT);
+						//v_0z = (v_0z + event.values[2]*deltaT);
+						//Log.v(Services.TAG,"Speed: " + Double.toString(v_0x) +
+						//		"/" +Double.toString(v_0y)+ "/" +Double.toString(v_0z));
+//		
+						double vector = Math.sqrt(event.values[0]*event.values[0]+
+						event.values[1]*event.values[1]+
+						event.values[2]*event.values[2]);
+					if (vector > 15){
+						if(varianceX() > 40||varianceY() > 40||varianceZ() > 40){
+						Log.v(Services.TAG, "variance > 40, launching camera...");
+						}
+						Services.isRecording = true;
+						startRecording();
 					}
+
 					
-					if(event.values[2] < 0){
-						D_sx = -(v_0x*v_0x)/(2*event.values[0]);	
-						D_sy = -(v_0y*v_0y)/(2*event.values[1]);	
-						D_sz = -(v_0z*v_0z)/(2*event.values[2]);		
-//						while(event.values[2] < 0){
-//							Dstoppedx = Dstoppedx + event.values[0];
-//							Dstoppedy = Dstoppedy + event.values[1];
-//							Dstoppedz = Dstoppedz + event.values[2];
-//							if(event.values[2] > -2 || event.values[2] < 2 && varianceZ() > 40){
-//								if(Dstoppedz < D_sz){
-//									Log.v(Services.TAG, "math = dangerous = launching camera...");
-////									Services.isRecording = true;
-////									startRecording();
-//								}
-//							}
-//						}
-					}
+					
+				}// end of while loop for stopping 
+					
+					
 					
 					/*
 					 * End: of mean and variance calculation
@@ -270,7 +272,7 @@ public class SensorServices extends Services implements SensorEventListener{
 					/*
 					 * End: Math calculation goes here.
 					 */
-				}
+//				}
 			}
 		}
 	}
@@ -284,7 +286,7 @@ public class SensorServices extends Services implements SensorEventListener{
 		if (!mTracking) {
 			Services.mSensorManager.registerListener(this, 
 					Services.mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), 
-					SensorManager.SENSOR_DELAY_GAME);
+					5000);
 			
 			
 //			Services.mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);

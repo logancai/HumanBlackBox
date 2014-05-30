@@ -3,10 +3,11 @@ package com.cgii.humanblackbox;
 import android.content.Context;
 import android.hardware.SensorEvent;
 import android.os.Handler;
-import android.text.format.Time;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.logancai.humanblackbox.R;
@@ -28,6 +29,7 @@ public class MainView extends FrameLayout{
     private final TextView yAccelerationView;
     private final TextView zAccelerationView;
     private final TextView carModeView;
+    private final TextView addressView;
     
     private final Handler mHandler = new Handler();
     private final Runnable mUpdateTextRunnable = new Runnable() {
@@ -62,6 +64,7 @@ public class MainView extends FrameLayout{
         yAccelerationView = (TextView) findViewById(R.id.Yacceleration);
         zAccelerationView = (TextView) findViewById(R.id.Zacceleration);
         carModeView = (TextView) findViewById(R.id.CarMode);
+        addressView = (TextView) findViewById(R.id.addresss);
         TextView appName = (TextView) findViewById(R.id.footer);
 //        TextView timeView = (TextView) findViewById(R.id.timestamp);
 		appName.setText("HumanBlackBox");
@@ -137,10 +140,13 @@ public class MainView extends FrameLayout{
 //    	mAccelerationView.setText(Integer.toString(count));
 //    	count += 1;
     	if (event != null){
+    		//Always show stuff
     		xAccelerationView.setText("X: "+ Float.toString(event.values[0]));
     		yAccelerationView.setText("Y: "+ Float.toString(event.values[1]));
     		zAccelerationView.setText("Z: "+ Float.toString(event.values[2]));
     		carModeView.setText("Demo Mode: "+Boolean.toString(Services.demoMode));
+    		addressView.setText(/*"Current location: " + */Services.address + " " + 
+    				Services.zipCode);
     	}
     	
         if (mChangeListener != null) {

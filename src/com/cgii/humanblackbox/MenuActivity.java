@@ -1,12 +1,13 @@
 package com.cgii.humanblackbox;
 
-import java.io.File;
+import java.io.IOException;
+import java.util.List;
+import java.util.Locale;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.media.ThumbnailUtils;
-import android.net.Uri;
+import android.location.Address;
+import android.location.Geocoder;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -15,9 +16,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
 
-import com.google.android.glass.app.Card;
 import com.google.android.glass.media.CameraManager;
 import com.logancai.humanblackbox.R;
 
@@ -149,6 +148,12 @@ public class MenuActivity extends Activity{
     		}
     	}
     };
+    public static Handler locationHandler = new Handler(){
+    	public void handleMessage(Message msg){
+    		Log.v(Services.TAG, "location handler called");
+    		findAddress(Services.mActivity);
+    	}
+    };
     
     public static void postActivity(){
     	Log.v(Services.TAG, "postActivity called");
@@ -182,5 +187,27 @@ public class MenuActivity extends Activity{
 	    
 	    super.onActivityResult(requestCode, resultCode, data);
 	}
+    
+    public static void findAddress(Activity activity){
+    	Geocoder geocoder = new Geocoder(activity, Locale.getDefault());
+    	List<Address> addressses = null;
+		try 
+		{
+			addressses = geocoder.getFromLocation(Services.mLocation.getLatitude(), Services.mLocation.getLongitude(), 1);
+		} catch (IOException e)
+		{
+			e.printStackTrace();
+			Log.v(Services.TAG, "SensorServices unable to get location");
+		}
+		if (addressses != null){
+			Services.address = addressses.get(0).getAddressLine(0);
+			Services.city = addressses.get(0).getAddressLine(1);
+			Services.country = addressses.get(0).getAddressLine(2);
+			Services.zipCode = addressses.get(0).getPostalCode();
+		}
+		else{
+			Log.e(Services.TAG, "Address is null");
+		}
+    }
     
 }

@@ -55,20 +55,21 @@ public final class R {
         public static final int owlup=0x7f02000b;
     }
     public static final class id {
-        public static final int CarMode=0x7f0b0006;
+        public static final int CarMode=0x7f0b0007;
         public static final int Xacceleration=0x7f0b0003;
         public static final int Yacceleration=0x7f0b0004;
         public static final int Zacceleration=0x7f0b0005;
-        public static final int demo_mode=0x7f0b000a;
-        public static final int footer=0x7f0b0008;
-        public static final int footer_container=0x7f0b0007;
+        public static final int addresss=0x7f0b0006;
+        public static final int demo_mode=0x7f0b000b;
+        public static final int footer=0x7f0b0009;
+        public static final int footer_container=0x7f0b0008;
         public static final int imageView1=0x7f0b0002;
         public static final int left_column=0x7f0b0001;
-        public static final int record_video=0x7f0b000c;
+        public static final int record_video=0x7f0b000d;
         public static final int seconds=0x7f0b0000;
-        public static final int send_location=0x7f0b000b;
-        public static final int stop=0x7f0b000d;
-        public static final int timestamp=0x7f0b0009;
+        public static final int send_location=0x7f0b000c;
+        public static final int stop=0x7f0b000e;
+        public static final int timestamp=0x7f0b000a;
     }
     public static final class layout {
         public static final int card_countdown=0x7f030000;

@@ -9,6 +9,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.hardware.SensorEvent;
 import android.hardware.SensorManager;
+import android.location.Geocoder;
+import android.location.Location;
 import android.location.LocationManager;
 import android.os.IBinder;
 import android.util.Log;
@@ -26,17 +28,23 @@ public class Services extends Service {
 	private Drawer mDrawer;
 	
 	public static SensorManager mSensorManager;
-	public static LocationManager mLocationManager;
 	public static SensorServices mSensorServices;
 	public static SensorEvent mSensorEvent;
+	
+	public static LocationManager mLocationManager;
+	public static Location mLocation;
+	public static String address;
+	public static String city;
+	public static String country;
+	public static String zipCode;
+	
 	public static boolean isRecording;
+	public static boolean demoMode;
 	public static Activity mActivity;
 	MenuActivity mMenuActivity;
-	public static boolean demoMode;
 	
 	public static ArrayList<SensorEventValues> mArrayList;
 	public static final int MAX_ARRAY_LENGTH = 45;
-	
 	
 	@Override
 	public IBinder onBind(Intent intent) {

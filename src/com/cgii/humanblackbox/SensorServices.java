@@ -1,17 +1,26 @@
 package com.cgii.humanblackbox;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 
+import android.content.Context;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.location.Address;
+import android.location.Criteria;
+import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Looper;
 import android.os.Message;
-import android.text.format.Time;
 import android.util.Log;
 
 class SensorEventValues {
@@ -26,7 +35,23 @@ class SensorEventValues {
 	}
 }
 
-public class SensorServices extends Services implements SensorEventListener, LocationListener{
+public class SensorServices extends Services implements SensorEventListener{
+	
+	/**
+     * The maximum age of a location retrieved from the passive location provider before it is
+     * considered too old to use when the compass first starts up.
+     */
+    private static final long MAX_LOCATION_AGE_MILLIS = TimeUnit.MINUTES.toMillis(30);
+    
+    /**
+     * The minimum elapsed time desired between location notifications.
+     */
+    private static final long MILLIS_BETWEEN_LOCATIONS = TimeUnit.SECONDS.toMillis(3);
+    
+    /**
+     * The minimum distance desired between location notifications.
+     */
+    private static final long METERS_BETWEEN_LOCATIONS = 2;
 	
 	public static boolean mTracking;
 	
@@ -96,36 +121,6 @@ public class SensorServices extends Services implements SensorEventListener, Loc
 		meanValueZ = sum/mArrayList.size();
 		return meanValueZ;
 	}
-	private double calculateMeanX(){
-		meanValueX *= Services.mArrayList.size();
-		if (mArrayList.size() > 0){
-			int largest = mArrayList.size();
-			largest--;
-			meanValueX += Services.mArrayList.get(largest).values[0];
-			meanValueX /= mArrayList.size();
-		}
-		return meanValueX;
-	}
-	private double calculateMeanY(){
-		meanValueY *= Services.mArrayList.size();
-		if (mArrayList.size() > 0){
-			int largest = mArrayList.size();
-			largest--;
-			meanValueY += Services.mArrayList.get(largest).values[1];
-			meanValueY /= mArrayList.size();
-		}
-		return meanValueY;
-	}
-	private double calculateMeanZ(){
-		meanValueZ *= Services.mArrayList.size();
-		if (mArrayList.size() > 0){
-			int largest = mArrayList.size();
-			largest--;
-			meanValueZ += Services.mArrayList.get(largest).values[2];
-			meanValueZ /= mArrayList.size();
-		}
-		return meanValueZ;
-	}
 	
 	private double varianceX(){
 		double sum = 0;
@@ -184,11 +179,25 @@ public class SensorServices extends Services implements SensorEventListener, Loc
 				 * Start: This is to add the current values to the ArrayList
 				 */
 				if (mArrayList.size() > MAX_ARRAY_LENGTH){
-					mArrayList.remove(0);
+					SensorEventValues mSensorEventValues = mArrayList.remove(0);
+					meanValueX = meanValueX * Services.MAX_ARRAY_LENGTH;
+					meanValueY = meanValueY * Services.MAX_ARRAY_LENGTH;
+					meanValueZ = meanValueZ * Services.MAX_ARRAY_LENGTH;
+					meanValueX = meanValueX - mSensorEventValues.values[0];
+					meanValueY = meanValueY - mSensorEventValues.values[1];
+					meanValueZ = meanValueZ - mSensorEventValues.values[2];
 				}
 				SensorEventValues mSensorEventValues = 
 						new SensorEventValues(event.values[0],event.values[1],event.values[2]);
+				meanValueX = meanValueX + event.values[0];
+				meanValueY = meanValueY + event.values[1];
+				meanValueZ = meanValueZ + event.values[2];
+				meanValueX = meanValueX / Services.MAX_ARRAY_LENGTH;
+				meanValueY = meanValueY / Services.MAX_ARRAY_LENGTH;
+				meanValueZ = meanValueZ / Services.MAX_ARRAY_LENGTH;
+				
 				mArrayList.add(mSensorEventValues);
+				
 				/*
 				 * End: This is to add the current values to the ArrayList
 				 */
@@ -276,6 +285,38 @@ public class SensorServices extends Services implements SensorEventListener, Loc
 			Services.mSensorManager.registerListener(this, 
 					Services.mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), 
 					SensorManager.SENSOR_DELAY_GAME);
+			
+			
+//			Services.mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+			Location lastLocation = Services.mLocationManager
+                    .getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
+			
+            if (lastLocation != null) {
+                long locationAge = lastLocation.getTime() - System.currentTimeMillis();
+                if (locationAge < MAX_LOCATION_AGE_MILLIS) {
+                    Services.mLocation = lastLocation;
+                }
+            }
+            else{
+            	Log.v(Services.TAG, "lastLocation is null");
+            }
+
+            Criteria criteria = new Criteria();
+            criteria.setAccuracy(Criteria.ACCURACY_FINE);
+            criteria.setBearingRequired(false);
+            criteria.setSpeedRequired(true);
+
+//            List<String> providers =
+//            		Services.mLocationManager.getProviders(criteria, true /* enabledOnly */);
+//            for (int i = 0; i < providers.size(); i++){
+//            	Log.v(Services.TAG, "Checking Provider: " + providers.get(i));
+//            	Services.mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
+//                    MILLIS_BETWEEN_LOCATIONS, METERS_BETWEEN_LOCATIONS, mLocationListener,
+//                    Looper.getMainLooper());
+//            }
+            Services.mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,
+            		MILLIS_BETWEEN_LOCATIONS, METERS_BETWEEN_LOCATIONS, mLocationListener,
+                    Looper.getMainLooper());
 		}
 		mTracking = true;
 		
@@ -284,7 +325,7 @@ public class SensorServices extends Services implements SensorEventListener, Loc
 	public void stop(){
 		if (mTracking) {
 			Services.mSensorManager.unregisterListener(this);
-			Services.mLocationManager.removeUpdates(this);
+			Services.mLocationManager.removeUpdates(mLocationListener);
 			mTracking = false;
 		}
 	}
@@ -303,24 +344,62 @@ public class SensorServices extends Services implements SensorEventListener, Loc
         MenuActivity.cameraHandler.sendMessage(msgObj);
 	}
 	
+	public static void getAddress(){
+		Message msgObj = MenuActivity.locationHandler.obtainMessage();
+        MenuActivity.locationHandler.sendMessage(msgObj);
+	}
+	
 	/*
 	 * Location services
 	 * onLocation, onStatusChanged, 
 	 */
-	@Override
-	public void onLocationChanged(Location location) {
+	
+	LocationListener mLocationListener = new LocationListener(){
+
+		@Override
+		public void onLocationChanged(Location location) {
+			Services.mLocation = location;
+			//geocoder will convert latitude/longitude to address
+			Log.v(Services.TAG, "SensorServices onLocationChanged");
+			getAddress();
+//			Services.address = Double.toString(location.getLatitude());
+//			Services.zipCode = Double.toString(location.getLongitude());
+//			Geocoder geocoder = new Geocoder(mMenuActivity, Locale.getDefault());
+//			List<Address> addressses = null;
+//			try 
+//			{
+//				addressses = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
+//				
+//			} catch (IOException e)
+//			{
+//				e.printStackTrace();
+//				Log.v(Services.TAG, "SensorServices unable to get location");
+//			}
+//			if (addressses != null){
+//				Services.address = addressses.get(0).getAddressLine(0);
+//				Services.city = addressses.get(0).getAddressLine(1);
+//				Services.country = addressses.get(0).getAddressLine(2);
+//				Services.zipCode = addressses.get(0).getPostalCode();
+//			}
+//			else{
+//				Log.e(Services.TAG, "Address is null");
+//			}
+		}
+
+		@Override
+		public void onStatusChanged(String provider, int status, Bundle extras) {
+			Log.d("Latitude + Longitude","status");
+		}
+
+		@Override
+		public void onProviderEnabled(String provider) {
+			Log.d("Latitude + Longitude","enable");
+		}
+
+		@Override
+		public void onProviderDisabled(String provider) {
+			Log.d("Latitude + Longitude","disable");
+		}
 		
-	}
-	@Override
-	public void onStatusChanged(String provider, int status, Bundle extras) {
-		Log.d("Latitude + Longitude","status");
-	}
-	@Override
-	public void onProviderEnabled(String provider) {
-		Log.d("Latitude + Longitude","enable");
-	}
-	@Override
-	public void onProviderDisabled(String provider) {
-		Log.d("Latitude + Longitude","disable");
-	}
+	};
 }

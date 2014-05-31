@@ -44,6 +44,7 @@ public class Services extends Service {
 	MenuActivity mMenuActivity;
 	
 	public static ArrayList<SensorEventValues> mArrayList;
+	public static String name = "N/A";
 	public static final int MAX_ARRAY_LENGTH = 45;
 	
 	@Override

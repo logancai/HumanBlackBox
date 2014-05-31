@@ -248,20 +248,17 @@ public class SensorServices extends Services implements SensorEventListener{
 						//Log.v(Services.TAG,"Speed: " + Double.toString(v_0x) +
 						//		"/" +Double.toString(v_0y)+ "/" +Double.toString(v_0z));
 //		
-						double vector = Math.sqrt(event.values[0]*event.values[0]+
+					double vector = Math.sqrt(event.values[0]*event.values[0]+
 						event.values[1]*event.values[1]+
 						event.values[2]*event.values[2]);
 					if (vector > 15){
-						if(varianceX() > 40||varianceY() > 40||varianceZ() > 40){
-						Log.v(Services.TAG, "variance > 40, launching camera...");
+						if(varianceX() > 50||varianceY() > 50||varianceZ() > 50){
+						Log.v(Services.TAG, "variance > 50, launching camera...");
 						}
 						Services.isRecording = true;
 						startRecording();
 					}
-
-					
-					
-				}// end of while loop for stopping 
+				}
 					
 					
 					

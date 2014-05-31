@@ -12,7 +12,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.MediaStore;
-import android.telephony.SmsManager;
+import android.speech.RecognizerIntent;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -27,6 +27,7 @@ public class MenuActivity extends Activity{
 	
 	public final static int recordingTimeInSeconds = 15;
 	private static final int TAKE_VIDEO_REQUEST = 1;
+	private static final int SPEECH_REQUEST = 0;
 	
 	public MenuActivity(){
 		Log.v(Services.TAG, "MenuActivity constructor");
@@ -39,19 +40,19 @@ public class MenuActivity extends Activity{
 		Services.mActivity = this;
 	}
 	
-	@Override
-	protected void onResume(){
-		super.onResume();
-		Log.v(Services.TAG, "MenuActivity onResume");
-		Services.mActivity = this;
-	}
+//	@Override
+//	protected void onResume(){
+//		super.onResume();
+//		Log.v(Services.TAG, "MenuActivity onResume");
+//		Services.mActivity = this;
+//	}
 	
-	@Override
-	protected void onPause(){
-		super.onPause();
-		Log.v(Services.TAG, "MenuActivity onPause");
-		Services.mActivity = this;
-	}
+//	@Override
+//	protected void onPause(){
+//		super.onPause();
+//		Log.v(Services.TAG, "MenuActivity onPause");
+//		Services.mActivity = this;
+//	}
 	
 	@Override
     public void onAttachedToWindow() {
@@ -72,6 +73,7 @@ public class MenuActivity extends Activity{
 	@Override
     public boolean onOptionsItemSelected(MenuItem item) {
 		Log.v(Services.TAG, "MenuActivity onOptionSelected");
+		Services.mActivity = this;
 		// Handle item selection.
         switch (item.getItemId()) {
             case R.id.stop:
@@ -85,17 +87,7 @@ public class MenuActivity extends Activity{
                     	stopService(new Intent(MenuActivity.this, Services.class));
                     }
                 });
-//            	stopService(new Intent(MenuActivity.this, Services.class));
                 return true;
-            case R.id.record_video:
-//            	Intent intent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
-//        		intent.putExtra(MediaStore.EXTRA_DURATION_LIMIT, recordingTimeInSeconds);
-//        		intent.putExtra(MediaStore.EXTRA_VIDEO_QUALITY, 1);
-//        		this.startActivityForResult(intent, TAKE_VIDEO_REQUEST);
-//            	Services.mActivity = this;
-            	Services.isRecording = true;
-            	SensorServices.startRecording();
-        		return true;
             case R.id.demo_mode:
             	if(Services.demoMode){
             		Services.demoMode = false;
@@ -105,23 +97,13 @@ public class MenuActivity extends Activity{
             	}
             	return true;
             case R.id.send_location:
-            	Intent intent = new Intent(Intent.ACTION_SEND);
-            	intent.setType("text/plain");
-            	intent.putExtra(Intent.EXTRA_EMAIL, new String[]{"logan.cai@gmail.com"});
-            	intent.putExtra(Intent.EXTRA_SUBJECT, 
-            			"Help, I'm at "+ Services.address + " " + Services.zipCode);
-            	try{
-            		startActivity(intent);
-            	}
-            	catch(Exception e){
-            		e.printStackTrace();
-            		Log.v(Services.TAG, "MenuActivity failed to send email");
-            	}
-            	
-//            	String number = "8317088522";
-//            	SmsManager.getDefault().sendTextMessage(number, null, 
-//            			"Help, I'm at "+ Services.address + " " + Services.zipCode, null,null);
+            	Thread thread1 = new Thread(new SMSService(), "thread1");
+            	thread1.start();
             	return true;
+            case R.id.my_name:
+            	Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+                this.startActivityForResult(intent, SPEECH_REQUEST);
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -130,7 +112,7 @@ public class MenuActivity extends Activity{
 	@Override
     public void onOptionsMenuClosed(Menu menu) {
         // Nothing else to do, closing the Activity.
-		Log.v(Services.TAG, "MenuActivity onOptionMenu");
+		Log.v(Services.TAG, "MenuActivity onOptionMenuClosed");
 		finish();
     }
 	
@@ -179,44 +161,27 @@ public class MenuActivity extends Activity{
     }
     
     @Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+    	super.onActivityResult(requestCode, resultCode, data);
     	Log.v(Services.TAG, "onActivityResult called");
     	Log.v(Services.TAG, "requestCode: " + requestCode);
-    	Log.v(Services.TAG, "resultCode: " + resultCode);
-	    if (requestCode == TAKE_VIDEO_REQUEST && resultCode == RESULT_OK) {
-	        String picturePath = data.getStringExtra(
-	                CameraManager.EXTRA_PICTURE_FILE_PATH);
-	        
-//	        Services.isRecording = false;
-			Log.v(Services.TAG, "The isRecording Booleans is now: "+Services.isRecording + " it should be false");
-//	        processPictureWhenReady(picturePath);
-	    }
-	    Services.isRecording = false;
-	    
-//	    File file = new File(data.getStringExtra(
-//                CameraManager.EXTRA_PICTURE_FILE_PATH));
-//	    Uri uri = Uri.fromFile(file);
-//	    Bitmap bitmap = ThumbnailUtils.createVideoThumbnail(uri.getPath(), MediaStore.Video.Thumbnails.MICRO_KIND);
-//	    Card card = new Card(this);
-//	    card.setImageLayout(Card.ImageLayout.LEFT);
-//	    card.addImage(bitmap);
-//	    card.setText("A new recording!");
-//	    card.setFootnote("HumanBlackBox");
-//	    View cardView = card.getView();
-	    
-	    super.onActivityResult(requestCode, resultCode, data);
+//    	Log.v(Services.TAG, "resultCode: " + resultCode);
 	}
     
     public static void findAddress(Activity activity){
-    	Geocoder geocoder = new Geocoder(activity, Locale.getDefault());
     	List<Address> addressses = null;
 		try 
 		{
+			Geocoder geocoder = new Geocoder(activity, Locale.getDefault());
 			addressses = geocoder.getFromLocation(Services.mLocation.getLatitude(), Services.mLocation.getLongitude(), 1);
-		} catch (IOException e)
-		{
+		}
+		catch (IOException e){
 			e.printStackTrace();
 			Log.v(Services.TAG, "SensorServices unable to get location");
+		}
+		catch (Exception e){
+			e.printStackTrace();
+			Log.v(Services.TAG, "SensorServices an exception occured");
 		}
 		if (addressses != null){
 			Services.address = addressses.get(0).getAddressLine(0);

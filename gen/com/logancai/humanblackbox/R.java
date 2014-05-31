@@ -42,17 +42,18 @@ public final class R {
     }
     public static final class drawable {
         public static final int gradient50=0x7f020000;
-        public static final int ic_camera_50=0x7f020001;
-        public static final int ic_compass=0x7f020002;
-        public static final int ic_drive_50=0x7f020003;
-        public static final int ic_gear_50=0x7f020004;
-        public static final int ic_launcher=0x7f020005;
-        public static final int ic_location_50=0x7f020006;
-        public static final int ic_read_aloud=0x7f020007;
-        public static final int ic_stop=0x7f020008;
-        public static final int ic_sync_50=0x7f020009;
-        public static final int owl=0x7f02000a;
-        public static final int owlup=0x7f02000b;
+        public static final int ic_add_person_50=0x7f020001;
+        public static final int ic_camera_50=0x7f020002;
+        public static final int ic_compass=0x7f020003;
+        public static final int ic_drive_50=0x7f020004;
+        public static final int ic_gear_50=0x7f020005;
+        public static final int ic_launcher=0x7f020006;
+        public static final int ic_location_50=0x7f020007;
+        public static final int ic_read_aloud=0x7f020008;
+        public static final int ic_stop=0x7f020009;
+        public static final int ic_sync_50=0x7f02000a;
+        public static final int owl=0x7f02000b;
+        public static final int owlup=0x7f02000c;
     }
     public static final class id {
         public static final int CarMode=0x7f0b0004;
@@ -65,7 +66,7 @@ public final class R {
         public static final int footer_container=0x7f0b0008;
         public static final int imageView1=0x7f0b0002;
         public static final int left_column=0x7f0b0001;
-        public static final int record_video=0x7f0b000d;
+        public static final int my_name=0x7f0b000d;
         public static final int seconds=0x7f0b0000;
         public static final int send_location=0x7f0b000c;
         public static final int stop=0x7f0b000e;
@@ -89,6 +90,7 @@ public final class R {
         public static final int demo_mode=0x7f080009;
         public static final int glass_voice_trigger=0x7f080005;
         public static final int hello_world=0x7f080001;
+        public static final int my_name=0x7f08000a;
         public static final int read_aloud=0x7f080004;
         public static final int record_video=0x7f080006;
         public static final int send_location=0x7f080007;

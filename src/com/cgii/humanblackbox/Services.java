@@ -43,6 +43,8 @@ public class Services extends Service {
 	public static boolean demoMode;
 	public static Activity mActivity;
 	MenuActivity mMenuActivity;
+	public static float lastHeading;
+	public static float speed;
 	
 	public static ArrayList<SensorEventValues> mArrayList;
 	public static String name = "N/A";

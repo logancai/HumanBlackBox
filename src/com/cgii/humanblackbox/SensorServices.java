@@ -8,7 +8,6 @@ import android.hardware.GeomagneticField;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
-import android.hardware.SensorManager;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
@@ -88,6 +87,8 @@ public class SensorServices extends Services implements SensorEventListener{
 		Services.isRecording = false;
 		mArrayList = new ArrayList<SensorEventValues>();
 		timeStart = new Date();
+		mRotationMatrix = new float[16];
+		mOrientation = new float[9];
 		Log.v(Services.TAG, "SensorServices start time" + Long.toString(timeStart.getTime()));
 	}
 	
@@ -236,47 +237,55 @@ public class SensorServices extends Services implements SensorEventListener{
 					 * 1) Services.isRecording = true;
 					 * 2) startRecording();
 					 */
-					
-					/*
-					 * Start: calculate the mean and variance
-					 * Note: meanX() must be called before varianceX()
-					 * or else your variance will be wrong.
-					 * Optimization tip; if you ever need to call meanX() again
-					 * use meanValueX so it does not need to recalculate
-					 */
-//					Log.v(Services.TAG, "SensorServices now: " + Long.toString(now.getTime()));
-//					if(now.getTime() != timeStart.getTime()){
-//						long deltaT = now.getTime() - timeStart.getTime();
-						//Log.v(Services.TAG,"Delta: " + Double.toString(deltaT));
-						//v_0x = (v_0x + event.values[0]*deltaT);
-						//v_0y = (v_0y + (event.values[1]-9.8)*deltaT);
-						//v_0z = (v_0z + event.values[2]*deltaT);
-						//Log.v(Services.TAG,"Speed: " + Double.toString(v_0x) +
-						//		"/" +Double.toString(v_0y)+ "/" +Double.toString(v_0z));
-					
-//					Log.v(Services.TAG, "Current mean: " + meanValueZ);
-//					Log.v(Services.TAG, "Actual mean: " + meanZ());
-					
-					if(varianceX() > 50 && varianceY() > 50 && varianceZ() > 50){
-						Log.v(Services.TAG, "variance > 50, launching camera...");
-						Services.isRecording = true;
-						startRecording();
+							
+					String typeofMovement = "walking";
+					// add get location.get speed right here you can get speed from location manager 
+					if(Services.speed < 20){
+					    // walking or driving
+					    if(Services.speed<10 && Services.speed>0){
+					        typeofMovement="walking";
+					    }
+					    else if(Services.speed < 20 && Services.speed>10){
+					        typeofMovement="bicycle";
+					    }
+					}
+					else {
+					    typeofMovement="car";
+					}
+
+					if(typeofMovement.equals("walking")){
+					    if(event.values[1]< 3){
+					        if(mHeading - Services.lastHeading > 20){
+					            // you are probably free falling
+					        	Log.v(Services.TAG, "Walking mode");
+					        	Services.isRecording = true;
+								startRecording();
+					        }
+					    }
+					}
+					else if(typeofMovement.equals("bicycle")){
+					    if( event.values[2]<3){
+					        if(mHeading - Services.lastHeading > 20){
+					        	Log.v(Services.TAG, "Bike mode");
+					        	Services.isRecording = true;
+								startRecording();
+					        }
+					    }
+					}
+					else if(typeofMovement.equals("car")){
+					    if(varianceZ()>60){
+					    	Log.v(Services.TAG, "car mode");
+					    	Services.isRecording = true;
+							startRecording();
+					    }
 					}
 				}
-					
-					
-					
-					/*
-					 * End: of mean and variance calculation
-					 */
-					
-					/*
-					 * End: Math calculation goes here.
-					 */
-//				}
 			}
 		}
 		if(event.sensor.getType() == Sensor.TYPE_ROTATION_VECTOR){
+			//Current mHeading = old
+			Services.lastHeading = mHeading;
+			
 			// Get the current heading from the sensor, then notify the listeners of the
             // change.
             mSensorManager.getRotationMatrixFromVector(mRotationMatrix, event.values);
@@ -293,8 +302,7 @@ public class SensorServices extends Services implements SensorEventListener{
             float magneticHeading = (float) Math.toDegrees(mOrientation[0]);
             mHeading = MathUtils.mod(magneticHeading, 360.0f)
                     - ARM_DISPLACEMENT_DEGREES;
-            
-            
+//            Log.v(Services.TAG, "Heading: " + Float.toString(mHeading));
 		}
 		
 	}
@@ -311,8 +319,8 @@ public class SensorServices extends Services implements SensorEventListener{
 					5000);
 			
 			Services.mSensorManager.registerListener(this,
-                    mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD),
-                    SensorManager.SENSOR_DELAY_UI);
+                    mSensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR),
+                    5000*2);
 			
 			
 //			Services.mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
@@ -389,6 +397,7 @@ public class SensorServices extends Services implements SensorEventListener{
 			Services.mLocation = location;
 			//geocoder will convert latitude/longitude to address
 			Log.v(Services.TAG, "SensorServices onLocationChanged");
+			Services.speed = location.getSpeed();
 			getAddress();
 		}
 

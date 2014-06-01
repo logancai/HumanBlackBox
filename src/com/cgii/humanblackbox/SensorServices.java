@@ -255,7 +255,7 @@ public class SensorServices extends Services implements SensorEventListener{
 
 					if(typeofMovement.equals("walking")){
 					    if(event.values[1]< 3){
-					        if(mHeading - Services.lastHeading > 20){
+					        if(Math.abs(mHeading - Services.lastHeading) > 20){
 					            // you are probably free falling
 					        	Log.v(Services.TAG, "Walking mode");
 					        	Services.isRecording = true;
@@ -265,7 +265,7 @@ public class SensorServices extends Services implements SensorEventListener{
 					}
 					else if(typeofMovement.equals("bicycle")){
 					    if( event.values[2]<3){
-					        if(mHeading - Services.lastHeading > 20){
+					        if(Math.abs(mHeading - Services.lastHeading) > 20){
 					        	Log.v(Services.TAG, "Bike mode");
 					        	Services.isRecording = true;
 								startRecording();
@@ -337,19 +337,6 @@ public class SensorServices extends Services implements SensorEventListener{
             	Log.v(Services.TAG, "lastLocation is null");
             }
 
-            Criteria criteria = new Criteria();
-            criteria.setAccuracy(Criteria.ACCURACY_FINE);
-            criteria.setBearingRequired(false);
-            criteria.setSpeedRequired(true);
-
-//            List<String> providers =
-//            		Services.mLocationManager.getProviders(criteria, true /* enabledOnly */);
-//            for (int i = 0; i < providers.size(); i++){
-//            	Log.v(Services.TAG, "Checking Provider: " + providers.get(i));
-//            	Services.mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
-//                    MILLIS_BETWEEN_LOCATIONS, METERS_BETWEEN_LOCATIONS, mLocationListener,
-//                    Looper.getMainLooper());
-//            }
             Services.mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,
             		MILLIS_BETWEEN_LOCATIONS, METERS_BETWEEN_LOCATIONS, mLocationListener,
                     Looper.getMainLooper());

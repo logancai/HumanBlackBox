@@ -175,7 +175,7 @@ public class MenuActivity extends Activity{
     	Log.v(Services.TAG, "requestCode: " + requestCode);
     	Log.v(Services.TAG, "resultCode: " + resultCode);
     	
-    	if (requestCode == TAKE_VIDEO_REQUEST /*&& resultCode == RESULT_OK*/) {
+    	if (requestCode == TAKE_VIDEO_REQUEST && resultCode == RESULT_OK) {
 	        String picturePath = data.getStringExtra(
 	                CameraManager.EXTRA_PICTURE_FILE_PATH);
 	        Log.v(Services.TAG, "Path to vide is: " + picturePath);

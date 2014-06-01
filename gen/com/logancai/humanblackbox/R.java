@@ -67,6 +67,7 @@ public final class R {
         public static final int imageView1=0x7f0b0002;
         public static final int left_column=0x7f0b0001;
         public static final int my_name=0x7f0b000d;
+        public static final int record_video=0x7f0b000f;
         public static final int seconds=0x7f0b0000;
         public static final int send_location=0x7f0b000c;
         public static final int stop=0x7f0b000e;

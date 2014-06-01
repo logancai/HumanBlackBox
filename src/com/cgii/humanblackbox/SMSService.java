@@ -1,21 +1,13 @@
 package com.cgii.humanblackbox;
 
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.List;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.net.URL;
+import java.net.URLConnection;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.util.EntityUtils;
 
 import android.util.Log;
 
@@ -29,12 +21,14 @@ public class SMSService implements Runnable{
 	public void run() {
 		HttpClient httpClient = new DefaultHttpClient();
 		String number = "4155952268";
+		
 		String message = "From:" + Services.name + ". I might be in an accident at " 
 				+ Services.address + " " + Services.zipCode;
 		String parm1 = null;
 		String parm2 = null;
 		
 		String address = "http://textbelt.com/text/";
+		/*
 		HttpPost httpPost = new HttpPost(address);
 		
 		// Request parameters and other properties.
@@ -64,6 +58,29 @@ public class SMSService implements Runnable{
 		    // writing exception to log
 		    e.printStackTrace();
 		}
+		*/
+		try{
+			URL url = new URL(address);
+			URLConnection conn = url.openConnection();
+			conn.setDoOutput(true);
+			OutputStreamWriter writer = new OutputStreamWriter(conn.getOutputStream());
+			
+			writer.write("number="+number + "&message=\"" + message + "\"");
+			writer.flush();
+			String line;
+			BufferedReader reader = new BufferedReader (new InputStreamReader(conn.getInputStream()));
+			while((line = reader.readLine()) != null){
+				System.out.println(line);
+			}
+			writer.close();
+			reader.close();
+		}
+		catch (Exception e){
+			Log.v(Services.TAG, "SMS an exception occurred");
+			e.printStackTrace();
+		}
+		
+		
 	}
 	
 }

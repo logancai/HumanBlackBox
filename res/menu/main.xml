@@ -22,14 +22,20 @@
         android:icon="@drawable/ic_gear_50" />
     <item 
         android:id="@+id/send_location" 
-        android:actionProviderClass="android.support.v7.widget.ShareActionProvider"
         android:title="@string/send_location" 
         android:icon="@drawable/ic_location_50" />
-    <item android:id="@+id/my_name" android:title="@string/my_name" android:icon="@drawable/ic_add_person_50" /><item
+    <item 
+        android:id="@+id/my_name" 
+        android:title="@string/my_name" 
+        android:icon="@drawable/ic_add_person_50" />
+    <item
         android:id="@+id/stop"
         android:title="@string/stop"
         android:icon="@drawable/ic_stop"/>
-    
-    
+    <item 
+        android:id="@+id/record_video"
+        android:title="@string/record_video"
+        android:icon="@drawable/ic_camera_50" 
+        android:visible="true"/>
 
 </menu>

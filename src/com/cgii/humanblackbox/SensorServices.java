@@ -1,20 +1,15 @@
 package com.cgii.humanblackbox;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
-import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
-import android.content.Context;
+import android.hardware.GeomagneticField;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.location.Address;
 import android.location.Criteria;
-import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -38,6 +33,14 @@ class SensorEventValues {
 public class SensorServices extends Services implements SensorEventListener{
 	
 	/**
+     * The sensors used by the compass are mounted in the movable arm on Glass. Depending on how
+     * this arm is rotated, it may produce a displacement ranging anywhere from 0 to about 12
+     * degrees. Since there is no way to know exactly how far the arm is rotated, we just split the
+     * difference.
+     */
+    private static final int ARM_DISPLACEMENT_DEGREES = 6;
+	
+	/**
      * The maximum age of a location retrieved from the passive location provider before it is
      * considered too old to use when the compass first starts up.
      */
@@ -54,6 +57,10 @@ public class SensorServices extends Services implements SensorEventListener{
     private static final long METERS_BETWEEN_LOCATIONS = 2;
 	
 	public static boolean mTracking;
+	private final float[] mRotationMatrix;
+	private final float[] mOrientation;
+	private GeomagneticField mGeomagneticField;
+	private float mPitch;
 	
 	/*
 	 * Start: Byron code
@@ -214,8 +221,8 @@ public class SensorServices extends Services implements SensorEventListener{
 						if(varianceX() > 40||varianceY() > 40||varianceZ() > 40){
 						Log.v(Services.TAG, "variance > 40, launching camera...");
 						}
-						Services.isRecording = true;
-						startRecording();
+//						Services.isRecording = true;
+//						startRecording();
 					}
 					/*
 					 * END: Keep this code for demo.
@@ -237,7 +244,6 @@ public class SensorServices extends Services implements SensorEventListener{
 					 * Optimization tip; if you ever need to call meanX() again
 					 * use meanValueX so it does not need to recalculate
 					 */
-					Date now = new Date();
 //					Log.v(Services.TAG, "SensorServices now: " + Long.toString(now.getTime()));
 //					if(now.getTime() != timeStart.getTime()){
 //						long deltaT = now.getTime() - timeStart.getTime();
@@ -247,14 +253,12 @@ public class SensorServices extends Services implements SensorEventListener{
 						//v_0z = (v_0z + event.values[2]*deltaT);
 						//Log.v(Services.TAG,"Speed: " + Double.toString(v_0x) +
 						//		"/" +Double.toString(v_0y)+ "/" +Double.toString(v_0z));
-//		
-					double vector = Math.sqrt(event.values[0]*event.values[0]+
-						event.values[1]*event.values[1]+
-						event.values[2]*event.values[2]);
-					if (vector > 15){
-						if(varianceX() > 50||varianceY() > 50||varianceZ() > 50){
+					
+//					Log.v(Services.TAG, "Current mean: " + meanValueZ);
+//					Log.v(Services.TAG, "Actual mean: " + meanZ());
+					
+					if(varianceX() > 50 && varianceY() > 50 && varianceZ() > 50){
 						Log.v(Services.TAG, "variance > 50, launching camera...");
-						}
 						Services.isRecording = true;
 						startRecording();
 					}
@@ -272,6 +276,27 @@ public class SensorServices extends Services implements SensorEventListener{
 //				}
 			}
 		}
+		if(event.sensor.getType() == Sensor.TYPE_ROTATION_VECTOR){
+			// Get the current heading from the sensor, then notify the listeners of the
+            // change.
+            mSensorManager.getRotationMatrixFromVector(mRotationMatrix, event.values);
+            mSensorManager.remapCoordinateSystem(mRotationMatrix, mSensorManager.AXIS_X,
+                    mSensorManager.AXIS_Z, mRotationMatrix);
+            mSensorManager.getOrientation(mRotationMatrix, mOrientation);
+
+            // Store the pitch (sed to display a message indicating that the user's head
+            // angle is too steep to produce reliable results.
+            mPitch = (float) Math.toDegrees(mOrientation[1]);
+
+            // Convert the heading (which is relative to magnetic north) to one that is
+            // relative to true north, using the user's current location to compute this.
+            float magneticHeading = (float) Math.toDegrees(mOrientation[0]);
+            mHeading = MathUtils.mod(magneticHeading, 360.0f)
+                    - ARM_DISPLACEMENT_DEGREES;
+            
+            
+		}
+		
 	}
 
 	@Override
@@ -284,6 +309,10 @@ public class SensorServices extends Services implements SensorEventListener{
 			Services.mSensorManager.registerListener(this, 
 					Services.mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), 
 					5000);
+			
+			Services.mSensorManager.registerListener(this,
+                    mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD),
+                    SensorManager.SENSOR_DELAY_UI);
 			
 			
 //			Services.mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);

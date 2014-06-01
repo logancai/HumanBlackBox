@@ -25,6 +25,8 @@ public class MenuActivity extends Activity{
 	
 	private final Handler mHandler = new Handler();
 	
+	public static boolean shouldFinishOnMenuClose = true;
+	
 	public final static int recordingTimeInSeconds = 15;
 	private static final int TAKE_VIDEO_REQUEST = 1;
 	private static final int SPEECH_REQUEST = 0;
@@ -73,6 +75,7 @@ public class MenuActivity extends Activity{
 	@Override
     public boolean onOptionsItemSelected(MenuItem item) {
 		Log.v(Services.TAG, "MenuActivity onOptionSelected");
+		shouldFinishOnMenuClose = true;
 		Services.mActivity = this;
 		// Handle item selection.
         switch (item.getItemId()) {
@@ -101,9 +104,16 @@ public class MenuActivity extends Activity{
             	thread1.start();
             	return true;
             case R.id.my_name:
-            	Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-                this.startActivityForResult(intent, SPEECH_REQUEST);
+            	shouldFinishOnMenuClose = false;
+            	Intent intentName = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+                this.startActivityForResult(intentName, SPEECH_REQUEST);
                 return true;
+            case R.id.record_video:
+            	Intent intentVideo = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
+        		intentVideo.putExtra(MediaStore.EXTRA_DURATION_LIMIT, recordingTimeInSeconds);
+        		intentVideo.putExtra(MediaStore.EXTRA_VIDEO_QUALITY, TAKE_VIDEO_REQUEST);
+        		this.startActivityForResult(intentVideo, TAKE_VIDEO_REQUEST);
+        		return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -113,7 +123,9 @@ public class MenuActivity extends Activity{
     public void onOptionsMenuClosed(Menu menu) {
         // Nothing else to do, closing the Activity.
 		Log.v(Services.TAG, "MenuActivity onOptionMenuClosed");
-		finish();
+		if (shouldFinishOnMenuClose){
+			finish();
+		}
     }
 	
 	/**
@@ -125,6 +137,7 @@ public class MenuActivity extends Activity{
     
     private static void launchCamera(Activity activity){
 		Log.v(Services.TAG, "LaunchCamera called called");
+		shouldFinishOnMenuClose = false;
     	Intent intent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
 		intent.putExtra(MediaStore.EXTRA_DURATION_LIMIT, recordingTimeInSeconds);
 		intent.putExtra(MediaStore.EXTRA_VIDEO_QUALITY, TAKE_VIDEO_REQUEST);
@@ -134,7 +147,6 @@ public class MenuActivity extends Activity{
 		}
 		else{
 			activity.startActivityForResult(intent, 1);
-			postActivity();
 			Services.isRecording = false;
 		}
     }
@@ -156,16 +168,29 @@ public class MenuActivity extends Activity{
     	}
     };
     
-    public static void postActivity(){
-    	Log.v(Services.TAG, "postActivity called");
-    }
-    
     @Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
     	super.onActivityResult(requestCode, resultCode, data);
     	Log.v(Services.TAG, "onActivityResult called");
     	Log.v(Services.TAG, "requestCode: " + requestCode);
-//    	Log.v(Services.TAG, "resultCode: " + resultCode);
+    	Log.v(Services.TAG, "resultCode: " + resultCode);
+    	
+    	if (requestCode == TAKE_VIDEO_REQUEST /*&& resultCode == RESULT_OK*/) {
+	        String picturePath = data.getStringExtra(
+	                CameraManager.EXTRA_PICTURE_FILE_PATH);
+	        Log.v(Services.TAG, "Path to vide is: " + picturePath);
+	        Services.isRecording = false;
+	    }
+    	
+    	if (requestCode == SPEECH_REQUEST && resultCode == RESULT_OK) {
+	        List<String> results = data.getStringArrayListExtra(
+	                RecognizerIntent.EXTRA_RESULTS);
+	        String spokenText = results.get(0);
+	        Services.name = spokenText;
+	        Log.v(Services.TAG, "Name changed to: " + Services.name);
+	    }
+    	finish();
+//    	super.onActivityResult(requestCode, resultCode, data);
 	}
     
     public static void findAddress(Activity activity){

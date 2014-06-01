@@ -30,6 +30,7 @@ public class Services extends Service {
 	public static SensorManager mSensorManager;
 	public static SensorServices mSensorServices;
 	public static SensorEvent mSensorEvent;
+	public static float mHeading;
 	
 	public static LocationManager mLocationManager;
 	public static Location mLocation;

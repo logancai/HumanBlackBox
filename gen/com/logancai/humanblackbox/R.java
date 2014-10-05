@@ -53,7 +53,7 @@ public final class R {
         public static final int ic_stop=0x7f020009;
         public static final int ic_sync_50=0x7f02000a;
         public static final int owl=0x7f02000b;
-        public static final int owlup=0x7f02000c;
+        public static final int penguinflip=0x7f02000c;
     }
     public static final class id {
         public static final int CarMode=0x7f0b0004;

@@ -22,7 +22,7 @@
             android:layout_alignWithParentIfMissing="false"
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
-            android:src="@drawable/owl" />
+            android:src="@drawable/penguinflip" />
 
     </RelativeLayout>
     

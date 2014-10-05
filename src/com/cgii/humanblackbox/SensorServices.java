@@ -358,13 +358,11 @@ public class SensorServices extends Services implements SensorEventListener{
 	 * a message for the camera to launch
 	 */
 	public static void startRecording(){
-//		Message msgObj = AnActivity.cameraHandler.obtainMessage();
 		Message msgObj = MenuActivity.cameraHandler.obtainMessage();
         Bundle b = new Bundle();
         b.putBoolean("message", Services.isRecording);
         msgObj.setData(b);
-//        AnActivity.cameraHandler.sendMessage(msgObj);
-        MenuActivity.cameraHandler.sendMessage(msgObj);
+//        MenuActivity.cameraHandler.sendMessage(msgObj);
 	}
 	
 	public static void getAddress(){

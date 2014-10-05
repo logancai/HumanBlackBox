@@ -7,7 +7,6 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.FrameLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.logancai.humanblackbox.R;
@@ -66,12 +65,7 @@ public class MainView extends FrameLayout{
         carModeView = (TextView) findViewById(R.id.CarMode);
         addressView = (TextView) findViewById(R.id.addresss);
         TextView appName = (TextView) findViewById(R.id.footer);
-//        TextView timeView = (TextView) findViewById(R.id.timestamp);
 		appName.setText("HumanBlackBox");
-//		Time time =new Time(Time.getCurrentTimezone());	
-//		
-//		timeView.setText(Integer.toString(time.hour) + Integer.toString(time.minute) 
-//				+ Integer.toString(time.second));
 		
         updateText();
     }
@@ -134,16 +128,20 @@ public class MainView extends FrameLayout{
      */
     void updateText() {
     	SensorEvent event = Services.mSensorEvent;
+    	
 //    	mAccelerationView.setText("X: "+ Float.toString(event.values[0]) +
 //				" Y: "+ Float.toString(event.values[1]) +
 //				" Z: "+ Float.toString(event.values[2]));
 //    	mAccelerationView.setText(Integer.toString(count));
 //    	count += 1;
+    	
+    	if (Services.address != null){
+    		addressView.setText(/*"Current location: " + */Services.address + " " + 
+    				Services.zipCode);
+    	}
     	if (event != null){
     		//Always show stuff
     		carModeView.setText("Demo Mode: "+Boolean.toString(Services.demoMode));
-    		addressView.setText(/*"Current location: " + */Services.address + " " + 
-    				Services.zipCode);
     		if (Services.demoMode){
     			xAccelerationView.setVisibility(View.VISIBLE);
     			yAccelerationView.setVisibility(View.VISIBLE);

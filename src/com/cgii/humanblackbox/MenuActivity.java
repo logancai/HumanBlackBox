@@ -1,6 +1,9 @@
 package com.cgii.humanblackbox;
 
+import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -8,7 +11,9 @@ import android.app.Activity;
 import android.content.Intent;
 import android.location.Address;
 import android.location.Geocoder;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.MediaStore;
@@ -27,7 +32,8 @@ public class MenuActivity extends Activity{
 	public static boolean shouldFinishOnMenuClose = true;
 	
 	public final static int recordingTimeInSeconds = 15;
-	private static final int TAKE_VIDEO_REQUEST = 1;
+	private static final int TAKE_VIDEO_REQUEST = 2;
+	private static final int TAKE_IMAGE_REQUEST = 1;
 	private static final int SPEECH_REQUEST = 0;
 	
 	public MenuActivity(){
@@ -108,10 +114,12 @@ public class MenuActivity extends Activity{
                 this.startActivityForResult(intentName, SPEECH_REQUEST);
                 return true;
             case R.id.record_video:
-            	Intent intentVideo = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
-        		intentVideo.putExtra(MediaStore.EXTRA_DURATION_LIMIT, recordingTimeInSeconds);
-        		intentVideo.putExtra(MediaStore.EXTRA_VIDEO_QUALITY, TAKE_VIDEO_REQUEST);
-        		this.startActivityForResult(intentVideo, TAKE_VIDEO_REQUEST);
+            	Intent intent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
+        		Services.fileUri = getOutputMediaFileUri(TAKE_VIDEO_REQUEST);
+        		intent.putExtra(MediaStore.EXTRA_OUTPUT, Services.fileUri);
+        		intent.putExtra(MediaStore.EXTRA_VIDEO_QUALITY, 1);
+        		intent.putExtra(MediaStore.EXTRA_DURATION_LIMIT, 15);
+        		this.startActivityForResult(intent, TAKE_VIDEO_REQUEST);
         		return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -134,32 +142,75 @@ public class MenuActivity extends Activity{
         mHandler.post(runnable);
     }
     
+    private static Uri getOutputMediaFileUri(int type){
+        return Uri.fromFile(getOutputMediaFile(type));
+    }
+    
+    /** Create a File for saving an image or video */
+    private static File getOutputMediaFile(int type){
+        // To be safe, you should check that the SDCard is mounted
+        // using Environment.getExternalStorageState() before doing this.
+
+        File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(
+                  Environment.DIRECTORY_PICTURES), "MyCameraApp");
+        // This location works best if you want the created images to be shared
+        // between applications and persist after your app has been uninstalled.
+
+        // Create the storage directory if it does not exist
+        if (! mediaStorageDir.exists()){
+            if (! mediaStorageDir.mkdirs()){
+                Log.d("MyCameraApp", "failed to create directory");
+                return null;
+            }
+        }
+
+        // Create a media file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        File mediaFile;
+        if (type == TAKE_IMAGE_REQUEST){
+            mediaFile = new File(mediaStorageDir.getPath() + File.separator +
+            "IMG_"+ timeStamp + ".jpg");
+        } else if(type == TAKE_VIDEO_REQUEST) {
+            mediaFile = new File(mediaStorageDir.getPath() + File.separator +
+            "VID_"+ timeStamp + ".mp4");
+        } else {
+            return null;
+        }
+
+        return mediaFile;
+    }
+    
     private static void launchCamera(Activity activity){
 		Log.v(Services.TAG, "LaunchCamera called called");
-		shouldFinishOnMenuClose = false;
-    	Intent intent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
-		intent.putExtra(MediaStore.EXTRA_DURATION_LIMIT, recordingTimeInSeconds);
-		intent.putExtra(MediaStore.EXTRA_VIDEO_QUALITY, TAKE_VIDEO_REQUEST);
-		if (activity == null){
-			Log.v(Services.TAG, "LaunchCamera activity is null");
-			Services.isRecording = false;
-		}
-		else{
-			activity.startActivityForResult(intent, 1);
-			Services.isRecording = false;
-		}
+//		shouldFinishOnMenuClose = false;
+//    	Intent intent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
+//		intent.putExtra(MediaStore.EXTRA_DURATION_LIMIT, recordingTimeInSeconds);
+//		intent.putExtra(MediaStore.EXTRA_VIDEO_QUALITY, TAKE_VIDEO_REQUEST);
+//		if (activity == null){
+//			Log.v(Services.TAG, "LaunchCamera activity is null");
+//			Services.isRecording = false;
+//		}
+//		else{
+//			activity.startActivityForResult(intent, 1);
+//			Services.isRecording = false;
+//		}
+		
+		
+		Intent intent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
+		Services.fileUri = getOutputMediaFileUri(TAKE_VIDEO_REQUEST);
+		intent.putExtra(MediaStore.EXTRA_OUTPUT, Services.fileUri);
+		intent.putExtra(MediaStore.EXTRA_VIDEO_QUALITY, 1);
+		intent.putExtra(MediaStore.EXTRA_DURATION_LIMIT, 15);
+		activity.startActivityForResult(intent, TAKE_VIDEO_REQUEST);
     }
     
     public static Handler cameraHandler = new Handler(){
     	public void handleMessage(Message msg){
     		Log.v(Services.TAG, "camera handler called");
-    		boolean isRecording = msg.getData().getBoolean("message");
-    		Log.v(Services.TAG, "Boolean is "+ isRecording);
-    		if (isRecording){
-    			launchCamera(Services.mActivity);
-    		}
+    		launchCamera(Services.mActivity);
     	}
     };
+    
     public static Handler locationHandler = new Handler(){
     	public void handleMessage(Message msg){
     		Log.v(Services.TAG, "location handler called");
@@ -170,6 +221,7 @@ public class MenuActivity extends Activity{
     @Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
     	super.onActivityResult(requestCode, resultCode, data);
+    	Services.isRecording = false;
     	Log.v(Services.TAG, "onActivityResult called");
     	Log.v(Services.TAG, "requestCode: " + requestCode);
     	Log.v(Services.TAG, "resultCode: " + resultCode);
@@ -189,7 +241,6 @@ public class MenuActivity extends Activity{
 	        Log.v(Services.TAG, "Name changed to: " + Services.name);
 	    }
     	finish();
-//    	super.onActivityResult(requestCode, resultCode, data);
 	}
     
     public static void findAddress(Activity activity){

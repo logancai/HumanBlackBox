@@ -1,7 +1,6 @@
 package com.cgii.humanblackbox;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.concurrent.TimeUnit;
 
 import android.app.Activity;
@@ -16,6 +15,7 @@ import android.hardware.SensorManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.Looper;
@@ -60,6 +60,8 @@ public class Services extends Service implements SensorEventListener, LocationLi
 	public static ArrayList<SensorEventValues> mArrayList;
 	public static String name = "N/A";
 	public static final int MAX_ARRAY_LENGTH = 45;
+	
+	public static Uri fileUri;
 	
 	/**
      * The sensors used by the compass are mounted in the movable arm on Glass. Depending on how
@@ -185,58 +187,70 @@ public class Services extends Service implements SensorEventListener, LocationLi
 			//The average sample rate is 20 milliseconds between samples
 			mSensorEvent = event;
 			if (Services.isRecording == false){
-				/*
-				 * START: Math calculations goes here.
-				 * 
-				 * To call camera, you must do these 2 commands.
-				 * 1) Services.isRecording = true;
-				 * 2) startRecording();
-				 */
-						
-				String typeofMovement = "walking";
-				// add get location.get speed right here you can get speed from location manager 
-				if(Services.speed < 20){
-				    // walking or driving
-				    if(Services.speed < 10 && Services.speed > 0){
-				        typeofMovement="walking";
-				    }
-				    else if(Services.speed < 20 && Services.speed > 10){
-				        typeofMovement="bicycle";
-				    }
-				}
-				else {
-				    typeofMovement="car";
-				}
-
-				if(typeofMovement.equals("walking")){
-				    if(event.values[1] < 3){
-				        if(Math.abs(mHeading - Services.lastHeading) > 20){
-				            // you are probably free falling
-				        	Log.v(Services.TAG, "Walking mode");
-				        	Services.isRecording = true;
-							startRecording();
-				        }
-				    }
-				}
-				else if(typeofMovement.equals("bicycle")){
-				    if( event.values[2] < 3){
-				        if(Math.abs(mHeading - Services.lastHeading) > 20){
-				        	Log.v(Services.TAG, "Bike mode");
-				        	Services.isRecording = true;
-							startRecording();
-				        }
-				    }
-				}
-				else if(typeofMovement.equals("car")){
-				    if(event.values[2] > 60){
-				    	Log.v(Services.TAG, "car mode");
-				    	Services.isRecording = true;
+				if (Services.demoMode){
+					double vector = Math.sqrt(event.values[0]*event.values[0]+
+							event.values[1]*event.values[1]+
+							event.values[2]*event.values[2]);
+					if (vector > 20){
+						Log.v(Services.TAG, "attempt record video");
+						Services.isRecording = true;
 						startRecording();
-				    }
+					}
+				}
+				else{
+					/*
+					 * START: Math calculations goes here.
+					 * 
+					 * To call camera, you must do these 2 commands.
+					 * 1) Services.isRecording = true;
+					 * 2) startRecording();
+					 */
+							
+					String typeofMovement = "walking";
+					// add get location.get speed right here you can get speed from location manager 
+					if(Services.speed < 20){
+					    // walking or driving
+					    if(Services.speed < 10 && Services.speed > 0){
+					        typeofMovement="walking";
+					    }
+					    else if(Services.speed < 20 && Services.speed > 10){
+					        typeofMovement="bicycle";
+					    }
+					}
+					else {
+					    typeofMovement="car";
+					}
+
+					if(typeofMovement.equals("walking")){
+					    if(event.values[1] < 3){
+					        if(Math.abs(mHeading - Services.lastHeading) > 20){
+					            // you are probably free falling
+					        	Log.v(Services.TAG, "Walking mode");
+					        	Services.isRecording = true;
+								startRecording();
+					        }
+					    }
+					}
+					else if(typeofMovement.equals("bicycle")){
+					    if( event.values[2] < 3){
+					        if(Math.abs(mHeading - Services.lastHeading) > 20){
+					        	Log.v(Services.TAG, "Bike mode");
+					        	Services.isRecording = true;
+								startRecording();
+					        }
+					    }
+					}
+					else if(typeofMovement.equals("car")){
+					    if(event.values[2] > 60){
+					    	Log.v(Services.TAG, "car mode");
+					    	Services.isRecording = true;
+							startRecording();
+					    }
+					}
 				}
 			}
 			else{
-				Log.v(Services.TAG, "Recording a video");
+//				Log.v(Services.TAG, "Recording a video");
 			}
 		}
 		if (event.sensor.getType() == Sensor.TYPE_ROTATION_VECTOR){
@@ -268,20 +282,18 @@ public class Services extends Service implements SensorEventListener, LocationLi
 		//Do nothing
 	}
 	
-	public static void getAddress(){
-		Message msgObj = MenuActivity.locationHandler.obtainMessage();
-        MenuActivity.locationHandler.sendMessage(msgObj);
-	}
-	
 	/*
 	 * We cannot call the camera directly. We can only send
 	 * a message for the camera to launch
 	 */
 	public static void startRecording(){
 		Message msgObj = MenuActivity.cameraHandler.obtainMessage();
-        Bundle b = new Bundle();
-        b.putBoolean("message", Services.isRecording);
-        msgObj.setData(b);
+		MenuActivity.cameraHandler.sendMessage(msgObj);
+	}
+	
+	public static void getAddress(){
+		Message msgObj = MenuActivity.locationHandler.obtainMessage();
+        MenuActivity.locationHandler.sendMessage(msgObj);
 	}
 	
 	@Override

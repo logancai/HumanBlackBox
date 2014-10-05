@@ -1,22 +1,13 @@
 package com.cgii.humanblackbox;
 
-import java.io.File;
-
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.media.ThumbnailUtils;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.Menu;
-import android.view.View;
-
-import com.google.android.glass.app.Card;
-import com.google.android.glass.media.CameraManager;
 
 public class AnActivity extends Activity{
 	
@@ -82,8 +73,8 @@ public class AnActivity extends Activity{
     	Log.v(Services.TAG, "requestCode: " + requestCode);
     	Log.v(Services.TAG, "resultCode: " + resultCode);
 	    if (requestCode == TAKE_VIDEO_REQUEST && resultCode == RESULT_OK) {
-	        String picturePath = data.getStringExtra(
-	                CameraManager.EXTRA_PICTURE_FILE_PATH);
+//	        String picturePath = data.getStringExtra(
+//	                CameraManager.EXTRA_PICTURE_FILE_PATH);
 	        
 //	        Services.isRecording = false;
 			Log.v(Services.TAG, "The isRecording Booleans is now: "+Services.isRecording + " it should be false");

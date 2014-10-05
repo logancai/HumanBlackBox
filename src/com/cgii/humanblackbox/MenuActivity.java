@@ -18,7 +18,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
-import com.google.android.glass.media.CameraManager;
 import com.logancai.humanblackbox.R;
 
 public class MenuActivity extends Activity{
@@ -176,9 +175,9 @@ public class MenuActivity extends Activity{
     	Log.v(Services.TAG, "resultCode: " + resultCode);
     	
     	if (requestCode == TAKE_VIDEO_REQUEST && resultCode == RESULT_OK) {
-	        String picturePath = data.getStringExtra(
-	                CameraManager.EXTRA_PICTURE_FILE_PATH);
-	        Log.v(Services.TAG, "Path to vide is: " + picturePath);
+//	        String picturePath = data.getStringExtra(
+//	                CameraManager.EXTRA_PICTURE_FILE_PATH);
+//	        Log.v(Services.TAG, "Path to vide is: " + picturePath);
 	        Services.isRecording = false;
 	    }
     	
